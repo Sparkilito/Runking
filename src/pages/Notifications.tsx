@@ -1,3 +1,4 @@
+import { Logo } from "@/components/Logo";
 import { Bell } from "lucide-react";
 
 const Notifications = () => {
@@ -5,8 +6,9 @@ const Notifications = () => {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="max-w-screen-xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-black">Notificaciones</h1>
+        <div className="max-w-screen-xl mx-auto px-4 py-4 flex items-center gap-3">
+          <Logo size="sm" />
+          <h1 className="text-xl font-bold">Notificaciones</h1>
         </div>
       </header>
 

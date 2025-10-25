@@ -1,3 +1,4 @@
+import { Logo } from "@/components/Logo";
 import { Settings, Grid3x3, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,8 +8,9 @@ const Profile = () => {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="max-w-screen-xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-black">Perfil</h1>
+        <div className="max-w-screen-xl mx-auto px-4 py-4 flex items-center gap-3">
+          <Logo size="sm" />
+          <h1 className="text-xl font-bold flex-1">Perfil</h1>
           <Button variant="ghost" size="sm">
             <Settings className="w-5 h-5" />
           </Button>

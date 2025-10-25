@@ -1,5 +1,6 @@
 import { RankingCard } from "@/components/RankingCard";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/Logo";
 import { Sparkles, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -52,9 +53,7 @@ const Home = () => {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="max-w-screen-xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-black bg-gradient-primary bg-clip-text text-transparent">
-            RankingApp
-          </h1>
+          <Logo />
         </div>
       </header>
 

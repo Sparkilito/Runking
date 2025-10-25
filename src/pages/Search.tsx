@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Logo } from "@/components/Logo";
 import { Search as SearchIcon } from "lucide-react";
 
 const categories = [
@@ -21,8 +22,9 @@ const Search = () => {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="max-w-screen-xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-black">Buscar</h1>
+        <div className="max-w-screen-xl mx-auto px-4 py-4 flex items-center gap-3">
+          <Logo size="sm" />
+          <h1 className="text-xl font-bold">Buscar</h1>
         </div>
       </header>
 

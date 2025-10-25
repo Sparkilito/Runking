@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Logo } from "@/components/Logo";
 import { PodiumCard } from "@/components/PodiumCard";
 import {
   ArrowLeft,
@@ -74,7 +75,7 @@ const RankingDetail = () => {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="max-w-screen-xl mx-auto px-4 py-4">
+        <div className="max-w-screen-xl mx-auto px-4 py-4 flex items-center gap-3">
           <Button
             variant="ghost"
             size="sm"
@@ -84,6 +85,7 @@ const RankingDetail = () => {
             <ArrowLeft className="w-4 h-4" />
             Atrás
           </Button>
+          <Logo size="sm" />
         </div>
       </header>
 
