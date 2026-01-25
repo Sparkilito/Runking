@@ -4,9 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Logo } from "@/components/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Plus, Sparkles, AlertCircle, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Sparkles,
+  GripVertical,
+  Trash2,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  Crown,
+  Loader2,
+  Check,
+} from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -20,17 +30,137 @@ import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
+  useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { toast } from "sonner";
-import {
-  DraggableRankingItem,
-  RankingItemData,
-} from "@/components/DraggableRankingItem";
-import { PodiumCard } from "@/components/PodiumCard";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useCategories } from "@/hooks/useCategories";
 import { useCreateRanking } from "@/hooks/useRankings";
+import { Podium } from "@/components/neo/Podium";
+import { cn } from "@/lib/utils";
+
+interface RankingItemData {
+  id: string;
+  title: string;
+  imageUrl?: string;
+  linkUrl?: string;
+}
+
+// Draggable Item Component
+function DraggableItem({
+  item,
+  index,
+  onRemove,
+  onUpdate,
+}: {
+  item: RankingItemData;
+  index: number;
+  onRemove: (id: string) => void;
+  onUpdate: (id: string, updates: Partial<RankingItemData>) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const getBadgeStyle = (pos: number) => {
+    if (pos === 0)
+      return "bg-gradient-to-br from-yellow-400 to-yellow-600 text-midnight-300";
+    if (pos === 1)
+      return "bg-gradient-to-br from-gray-300 to-gray-500 text-midnight-300";
+    if (pos === 2)
+      return "bg-gradient-to-br from-amber-600 to-amber-800 text-white";
+    return "bg-white/10 text-white/60";
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "glass rounded-squircle-lg p-4",
+        "transition-all duration-200",
+        isDragging && "scale-105 shadow-glass-lg z-50 opacity-90"
+      )}
+    >
+      <div className="flex items-center gap-3">
+        {/* Drag handle */}
+        <button
+          {...attributes}
+          {...listeners}
+          className="p-2 rounded-lg hover:bg-white/10 cursor-grab active:cursor-grabbing touch-none"
+        >
+          <GripVertical className="w-5 h-5 text-white/40" />
+        </button>
+
+        {/* Position badge */}
+        <div
+          className={cn(
+            "w-8 h-8 rounded-full flex items-center justify-center",
+            "font-display font-bold text-sm",
+            getBadgeStyle(index)
+          )}
+        >
+          {index + 1}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <Input
+            value={item.title}
+            onChange={(e) => onUpdate(item.id, { title: e.target.value })}
+            className="bg-transparent border-0 p-0 h-auto text-white font-medium focus:ring-0 focus:outline-none"
+            placeholder="Nombre del ítem"
+          />
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => {
+              const url = prompt("URL de la imagen:", item.imageUrl || "");
+              if (url !== null) onUpdate(item.id, { imageUrl: url || undefined });
+            }}
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              item.imageUrl ? "bg-purple-500/20 text-purple-400" : "text-white/40 hover:bg-white/10"
+            )}
+          >
+            <ImageIcon className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => {
+              const url = prompt("URL del enlace:", item.linkUrl || "");
+              if (url !== null) onUpdate(item.id, { linkUrl: url || undefined });
+            }}
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              item.linkUrl ? "bg-cyan-500/20 text-cyan-400" : "text-white/40 hover:bg-white/10"
+            )}
+          >
+            <LinkIcon className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onRemove(item.id)}
+            className="p-2 rounded-lg text-white/40 hover:bg-red-500/20 hover:text-red-400 transition-colors"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const CreateRanking = () => {
   const navigate = useNavigate();
@@ -42,7 +172,6 @@ const CreateRanking = () => {
   const [categoryId, setCategoryId] = useState("");
   const [newItemTitle, setNewItemTitle] = useState("");
   const [items, setItems] = useState<RankingItemData[]>([]);
-  const [showPreview, setShowPreview] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -64,7 +193,6 @@ const CreateRanking = () => {
         const newIndex = items.findIndex((item) => item.id === over.id);
         const newItems = arrayMove(items, oldIndex, newIndex);
 
-        // Haptic feedback if available
         if (navigator.vibrate) {
           navigator.vibrate(50);
         }
@@ -87,9 +215,7 @@ const CreateRanking = () => {
 
     setItems([...items, newItem]);
     setNewItemTitle("");
-    toast.success("¡Ítem agregado!", {
-      icon: "✨",
-    });
+    toast.success("¡Ítem agregado!");
   };
 
   const removeItem = (id: string) => {
@@ -131,11 +257,11 @@ const CreateRanking = () => {
           title: item.title,
           image_url: item.imageUrl || null,
           link_url: item.linkUrl || null,
-          position: 0, // Will be set by the mutation
+          position: 0,
         })),
       });
 
-      toast.success("¡Ranking publicado! 🎉👑", {
+      toast.success("¡Ranking publicado!", {
         description: "Tu ranking ya está en vivo",
       });
       navigate("/");
@@ -145,28 +271,37 @@ const CreateRanking = () => {
     }
   };
 
-  const canShowPodium = items.length >= 3;
+  const canPublish = title && categoryId && items.length >= 3;
+
+  // Progress steps
+  const steps = [
+    { label: "Info", completed: !!title && !!categoryId },
+    { label: "Ítems", completed: items.length >= 3 },
+    { label: "Publicar", completed: false },
+  ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen pb-32">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-lg border-b border-border">
-        <div className="max-w-screen-xl mx-auto px-4 py-3 flex items-center gap-3">
+      <header className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/5">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-4">
           <Button
             variant="ghost"
-            size="sm"
+            size="icon-sm"
             onClick={() => navigate(-1)}
-            className="gap-2"
+            className="text-white/70"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Cancelar
+            <ArrowLeft className="w-5 h-5" />
           </Button>
-          <Logo size="sm" />
-          <div className="flex-1" />
+
+          <div className="flex-1">
+            <h1 className="font-display font-bold text-white">Crear Ranking</h1>
+          </div>
+
           <Button
             onClick={handlePublish}
-            disabled={!title || !categoryId || items.length < 3 || createRanking.isPending}
-            className="bg-gradient-primary text-primary-foreground font-bold shadow-glow hover:scale-105 transition-transform"
+            disabled={!canPublish || createRanking.isPending}
+            size="default"
           >
             {createRanking.isPending ? (
               <>
@@ -180,67 +315,54 @@ const CreateRanking = () => {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        {/* Progress indicator */}
-        <div className="flex items-center gap-2 text-sm">
-          <div
-            className={`flex items-center gap-2 ${
-              title ? "text-primary font-semibold" : "text-muted-foreground"
-            }`}
-          >
-            <div
-              className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                title ? "bg-primary text-primary-foreground" : "bg-muted"
-              }`}
-            >
-              1
+      <main className="pt-20 max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {/* Progress */}
+        <div className="flex items-center justify-center gap-2">
+          {steps.map((step, i) => (
+            <div key={step.label} className="flex items-center gap-2">
+              <div
+                className={cn(
+                  "w-8 h-8 rounded-full flex items-center justify-center",
+                  "font-display font-bold text-sm transition-all duration-300",
+                  step.completed
+                    ? "bg-gradient-to-br from-solar-400 to-solar-600 text-midnight-300"
+                    : "bg-white/10 text-white/50"
+                )}
+              >
+                {step.completed ? <Check className="w-4 h-4" /> : i + 1}
+              </div>
+              <span
+                className={cn(
+                  "text-sm font-medium hidden sm:block",
+                  step.completed ? "text-solar-400" : "text-white/50"
+                )}
+              >
+                {step.label}
+              </span>
+              {i < steps.length - 1 && (
+                <div
+                  className={cn(
+                    "w-8 sm:w-16 h-0.5 rounded-full",
+                    step.completed ? "bg-solar-400" : "bg-white/10"
+                  )}
+                />
+              )}
             </div>
-            Info
-          </div>
-          <div className="flex-1 h-0.5 bg-border" />
-          <div
-            className={`flex items-center gap-2 ${
-              items.length > 0 ? "text-primary font-semibold" : "text-muted-foreground"
-            }`}
-          >
-            <div
-              className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                items.length > 0 ? "bg-primary text-primary-foreground" : "bg-muted"
-              }`}
-            >
-              2
-            </div>
-            Ítems
-          </div>
-          <div className="flex-1 h-0.5 bg-border" />
-          <div
-            className={`flex items-center gap-2 ${
-              canShowPodium ? "text-primary font-semibold" : "text-muted-foreground"
-            }`}
-          >
-            <div
-              className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                canShowPodium ? "bg-primary text-primary-foreground" : "bg-muted"
-              }`}
-            >
-              3
-            </div>
-            Vista previa
-          </div>
+          ))}
         </div>
 
-        {/* Basic info */}
-        <Card className="p-6 space-y-5 animate-scale-in">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0 mt-1">
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
+        {/* Basic Info Card */}
+        <Card className="p-6 space-y-5">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-squircle bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center flex-shrink-0 shadow-glow-purple">
+              <Sparkles className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1 space-y-4">
               <div>
-                <h2 className="text-xl font-bold mb-1">
+                <h2 className="font-display text-xl font-bold text-white mb-1">
                   ¿Sobre qué es tu ranking?
                 </h2>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white/50">
                   Dale un título atractivo que capture la atención
                 </p>
               </div>
@@ -249,24 +371,29 @@ const CreateRanking = () => {
                 placeholder="Ej: Las 10 Mejores Películas de Ciencia Ficción"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="text-lg font-semibold h-12"
+                className="text-lg font-semibold"
               />
 
               <Textarea
-                placeholder="Describe tu ranking y por qué es especial..."
+                placeholder="Describe tu ranking y por qué es especial... (opcional)"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                className="resize-none"
+                className="resize-none bg-white/5 border-white/10 rounded-squircle text-white placeholder:text-white/40"
               />
 
               {/* Categories */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Categoría</label>
+              <div className="space-y-3">
+                <label className="text-sm font-heading font-semibold text-white">
+                  Categoría
+                </label>
                 {categoriesLoading ? (
                   <div className="flex flex-wrap gap-2">
                     {[1, 2, 3, 4, 5].map((i) => (
-                      <Skeleton key={i} className="h-10 w-24 rounded-full" />
+                      <Skeleton
+                        key={i}
+                        className="h-10 w-24 rounded-full bg-white/10"
+                      />
                     ))}
                   </div>
                 ) : (
@@ -275,11 +402,20 @@ const CreateRanking = () => {
                       <button
                         key={cat.id}
                         onClick={() => setCategoryId(cat.id)}
-                        className={`px-4 py-2 rounded-full font-medium transition-all ${
-                          categoryId === cat.id
-                            ? "bg-primary text-primary-foreground shadow-glow scale-105"
-                            : "bg-muted hover:bg-muted/80"
-                        }`}
+                        className={cn(
+                          "category-pill transition-all duration-200",
+                          categoryId === cat.id && "active scale-105"
+                        )}
+                        style={{
+                          borderColor:
+                            categoryId === cat.id
+                              ? `${cat.color}80`
+                              : undefined,
+                          backgroundColor:
+                            categoryId === cat.id
+                              ? `${cat.color}20`
+                              : undefined,
+                        }}
                       >
                         {cat.name}
                       </button>
@@ -291,12 +427,15 @@ const CreateRanking = () => {
           </div>
         </Card>
 
-        {/* Add items */}
-        <Card className="p-6 space-y-4 animate-scale-in">
+        {/* Add Items Card */}
+        <Card className="p-6 space-y-4">
           <div>
-            <h2 className="text-xl font-bold mb-1">Agrega tus ítems</h2>
-            <p className="text-sm text-muted-foreground">
-              Escribe cada ítem y luego arrastra para ordenar
+            <h2 className="font-display text-xl font-bold text-white mb-1">
+              Agrega tus ítems
+            </h2>
+            <p className="text-sm text-white/50">
+              Escribe cada ítem y luego arrastra para ordenar ({items.length}/3
+              mínimo)
             </p>
           </div>
 
@@ -306,26 +445,16 @@ const CreateRanking = () => {
               value={newItemTitle}
               onChange={(e) => setNewItemTitle(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && addItem()}
-              className="flex-1 h-12"
+              className="flex-1"
             />
-            <Button onClick={addItem} size="lg" className="gap-2 px-6">
+            <Button onClick={addItem} className="gap-2 px-6">
               <Plus className="w-5 h-5" />
               Agregar
             </Button>
           </div>
-
-          {items.length > 0 && (
-            <Alert className="bg-primary/5 border-primary/20">
-              <AlertCircle className="h-4 w-4 text-primary" />
-              <AlertDescription className="text-sm">
-                <strong>Tip:</strong> Arrastra los ítems para reordenar •{" "}
-                {items.length} ítem{items.length !== 1 && "s"}
-              </AlertDescription>
-            </Alert>
-          )}
         </Card>
 
-        {/* Sortable list */}
+        {/* Sortable Items List */}
         {items.length > 0 && (
           <div className="space-y-3">
             <DndContext
@@ -338,7 +467,7 @@ const CreateRanking = () => {
                 strategy={verticalListSortingStrategy}
               >
                 {items.map((item, index) => (
-                  <DraggableRankingItem
+                  <DraggableItem
                     key={item.id}
                     item={item}
                     index={index}
@@ -351,17 +480,18 @@ const CreateRanking = () => {
           </div>
         )}
 
+        {/* Empty State */}
         {items.length === 0 && (
-          <Card className="p-16 text-center animate-fade-in">
-            <div className="space-y-3">
-              <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
-                <Plus className="w-8 h-8 text-muted-foreground" />
+          <Card className="p-12 text-center">
+            <div className="space-y-4">
+              <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto">
+                <Plus className="w-10 h-10 text-white/30" />
               </div>
               <div>
-                <h3 className="font-bold text-lg mb-1">
+                <h3 className="font-display font-bold text-lg text-white mb-1">
                   Empieza a construir tu ranking
                 </h3>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-white/50 text-sm">
                   Agrega al menos 3 ítems para crear tu podio
                 </p>
               </div>
@@ -369,44 +499,35 @@ const CreateRanking = () => {
           </Card>
         )}
 
-        {/* Preview */}
-        {canShowPodium && (
-          <Card className="p-6 space-y-4 bg-gradient-to-br from-primary/5 to-accent/5 animate-bounce-in">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Vista previa del podio</h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowPreview(!showPreview)}
-              >
-                {showPreview ? "Ocultar" : "Mostrar"}
-              </Button>
+        {/* Preview Podium */}
+        {items.length >= 3 && (
+          <Card className="p-6 glass-purple">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-solar-500/20 mb-4">
+                <Crown className="w-4 h-4 text-solar-400" />
+                <span className="text-sm font-medium text-solar-400">
+                  Vista previa del podio
+                </span>
+              </div>
             </div>
 
-            {showPreview && (
-              <div className="animate-scale-in">
-                <PodiumCard
-                  items={items.slice(0, 3).map((item, index) => ({
-                    position: index + 1,
-                    title: item.title,
-                    imageUrl: item.imageUrl,
-                  }))}
-                />
-                <p className="text-center text-sm text-muted-foreground mt-4">
-                  Así se verá tu Top 3 🏆
-                </p>
-              </div>
-            )}
+            <Podium
+              items={items.slice(0, 3).map((item) => ({
+                id: item.id,
+                title: item.title,
+                image: item.imageUrl,
+              }))}
+            />
           </Card>
         )}
 
-        {/* Publish button (mobile) */}
-        <div className="sticky bottom-20 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent">
+        {/* Mobile Publish Button */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 glass-strong border-t border-white/5 md:hidden">
           <Button
             onClick={handlePublish}
-            disabled={!title || !categoryId || items.length < 3 || createRanking.isPending}
+            disabled={!canPublish || createRanking.isPending}
             size="lg"
-            className="w-full bg-gradient-primary text-primary-foreground font-bold text-lg shadow-glow hover:scale-105 transition-transform"
+            className="w-full"
           >
             {createRanking.isPending ? (
               <>
@@ -414,7 +535,10 @@ const CreateRanking = () => {
                 Publicando...
               </>
             ) : (
-              "Publicar Ranking"
+              <>
+                <Crown className="w-4 h-4 mr-2" />
+                Publicar Ranking
+              </>
             )}
           </Button>
         </div>

@@ -1,20 +1,31 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Logo } from '@/components/Logo';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, Loader2, Mail, Lock, User, AtSign, AlertCircle, CheckCircle } from 'lucide-react';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  Mail,
+  Lock,
+  User,
+  AtSign,
+  AlertCircle,
+  CheckCircle,
+  Crown,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function Register() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const [displayName, setDisplayName] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,22 +36,24 @@ export default function Register() {
 
   const validateForm = () => {
     if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
+      setError("La contraseña debe tener al menos 6 caracteres");
       return false;
     }
 
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError("Las contraseñas no coinciden");
       return false;
     }
 
     if (username.length < 3) {
-      setError('El nombre de usuario debe tener al menos 3 caracteres');
+      setError("El nombre de usuario debe tener al menos 3 caracteres");
       return false;
     }
 
     if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      setError('El nombre de usuario solo puede contener letras, números y guiones bajos');
+      setError(
+        "El nombre de usuario solo puede contener letras, números y guiones bajos"
+      );
       return false;
     }
 
@@ -58,13 +71,18 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      const { error } = await signUp(email, password, username.toLowerCase(), displayName || username);
+      const { error } = await signUp(
+        email,
+        password,
+        username.toLowerCase(),
+        displayName || username
+      );
 
       if (error) {
-        if (error.message.includes('User already registered')) {
-          setError('Este email ya está registrado');
-        } else if (error.message.includes('Password')) {
-          setError('La contraseña debe tener al menos 6 caracteres');
+        if (error.message.includes("User already registered")) {
+          setError("Este email ya está registrado");
+        } else if (error.message.includes("Password")) {
+          setError("La contraseña debe tener al menos 6 caracteres");
         } else {
           setError(error.message);
         }
@@ -73,7 +91,7 @@ export default function Register() {
 
       setSuccess(true);
     } catch (err) {
-      setError('Ocurrió un error inesperado');
+      setError("Ocurrió un error inesperado");
     } finally {
       setIsLoading(false);
     }
@@ -81,27 +99,42 @@ export default function Register() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-background to-muted/20">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md space-y-8 animate-fade-in">
-          <div className="flex flex-col items-center space-y-2">
-            <Logo size="lg" />
+          <div className="flex flex-col items-center space-y-4">
+            <Link to="/" className="flex items-center gap-3">
+              <div
+                className={cn(
+                  "w-16 h-16 rounded-squircle-lg",
+                  "bg-gradient-to-br from-solar-400 to-solar-600",
+                  "flex items-center justify-center",
+                  "shadow-glow-solar"
+                )}
+              >
+                <Crown className="w-8 h-8 text-midnight-300" />
+              </div>
+            </Link>
           </div>
 
-          <Card className="border-border/50 shadow-lg">
+          <Card className="glass rounded-squircle-xl">
             <CardContent className="pt-6 text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
-                <CheckCircle className="h-8 w-8 text-green-500" />
+              <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mx-auto">
+                <CheckCircle className="h-10 w-10 text-green-500" />
               </div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold">¡Registro exitoso!</h2>
-                <p className="text-muted-foreground">
-                  Hemos enviado un email de confirmación a <strong>{email}</strong>.
-                  Por favor revisa tu bandeja de entrada y confirma tu cuenta.
+                <h2 className="font-display text-2xl font-bold text-white">
+                  ¡Registro exitoso!
+                </h2>
+                <p className="text-white/60">
+                  Hemos enviado un email de confirmación a{" "}
+                  <strong className="text-white">{email}</strong>. Por favor
+                  revisa tu bandeja de entrada y confirma tu cuenta.
                 </p>
               </div>
               <Button
-                onClick={() => navigate('/login')}
-                className="w-full bg-gradient-primary hover:opacity-90"
+                onClick={() => navigate("/login")}
+                size="lg"
+                className="w-full"
               >
                 Ir a Iniciar Sesión
               </Button>
@@ -113,66 +146,92 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-background to-muted/20">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 py-12">
       <div className="w-full max-w-md space-y-8 animate-fade-in">
         {/* Logo */}
-        <div className="flex flex-col items-center space-y-2">
-          <Logo size="lg" />
-          <p className="text-muted-foreground text-center">
-            Únete a la comunidad de rankings
-          </p>
+        <div className="flex flex-col items-center space-y-4">
+          <Link to="/" className="flex items-center gap-3 group">
+            <div
+              className={cn(
+                "w-16 h-16 rounded-squircle-lg",
+                "bg-gradient-to-br from-solar-400 to-solar-600",
+                "flex items-center justify-center",
+                "shadow-glow-solar",
+                "transition-transform duration-300 group-hover:scale-110"
+              )}
+            >
+              <Crown className="w-8 h-8 text-midnight-300" />
+            </div>
+          </Link>
+          <div className="text-center">
+            <h1 className="font-display text-3xl font-bold text-white">
+              Run<span className="text-solar-400">King</span>
+            </h1>
+            <p className="text-white/50 mt-2">Únete a la comunidad de rankings</p>
+          </div>
         </div>
 
         {/* Register Card */}
-        <Card className="border-border/50 shadow-lg">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Crear Cuenta</CardTitle>
-            <CardDescription className="text-center">
-              Completa tus datos para registrarte
-            </CardDescription>
+        <Card className="glass rounded-squircle-xl">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="font-display text-2xl text-center text-white">
+              Crear Cuenta
+            </CardTitle>
           </CardHeader>
 
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               {error && (
-                <Alert variant="destructive" className="animate-scale-in">
+                <Alert
+                  variant="destructive"
+                  className="animate-scale-in bg-red-500/10 border-red-500/20 text-red-400"
+                >
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="username">Nombre de usuario</Label>
+                <Label htmlFor="username" className="text-white/80">
+                  Nombre de usuario
+                </Label>
                 <div className="relative">
-                  <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
                     id="username"
                     type="text"
                     placeholder="tu_usuario"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
-                    className="pl-10"
+                    onChange={(e) =>
+                      setUsername(
+                        e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "")
+                      )
+                    }
+                    className="pl-11"
                     required
                     disabled={isLoading}
                     maxLength={20}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-white/40">
                   Solo letras, números y guiones bajos. Mínimo 3 caracteres.
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="displayName">Nombre para mostrar (opcional)</Label>
+                <Label htmlFor="displayName" className="text-white/80">
+                  Nombre para mostrar{" "}
+                  <span className="text-white/40">(opcional)</span>
+                </Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
                     id="displayName"
                     type="text"
                     placeholder="Tu Nombre"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="pl-10"
+                    className="pl-11"
                     disabled={isLoading}
                     maxLength={50}
                   />
@@ -180,16 +239,18 @@ export default function Register() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-white/80">
+                  Email
+                </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="tu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-11"
                     required
                     disabled={isLoading}
                   />
@@ -197,16 +258,18 @@ export default function Register() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Contraseña</Label>
+                <Label htmlFor="password" className="text-white/80">
+                  Contraseña
+                </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
                     id="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
+                    className="pl-11 pr-11"
                     required
                     disabled={isLoading}
                     minLength={6}
@@ -214,7 +277,7 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -223,22 +286,22 @@ export default function Register() {
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Mínimo 6 caracteres
-                </p>
+                <p className="text-xs text-white/40">Mínimo 6 caracteres</p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
+                <Label htmlFor="confirmPassword" className="text-white/80">
+                  Confirmar Contraseña
+                </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
                     id="confirmPassword"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="pl-10"
+                    className="pl-11"
                     required
                     disabled={isLoading}
                   />
@@ -246,10 +309,11 @@ export default function Register() {
               </div>
             </CardContent>
 
-            <CardFooter className="flex flex-col space-y-4">
+            <CardFooter className="flex flex-col space-y-4 pt-2">
               <Button
                 type="submit"
-                className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
+                size="lg"
+                className="w-full"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -258,15 +322,15 @@ export default function Register() {
                     Creando cuenta...
                   </>
                 ) : (
-                  'Crear Cuenta'
+                  "Crear Cuenta"
                 )}
               </Button>
 
-              <p className="text-sm text-center text-muted-foreground">
-                ¿Ya tienes cuenta?{' '}
+              <p className="text-sm text-center text-white/50">
+                ¿Ya tienes cuenta?{" "}
                 <Link
                   to="/login"
-                  className="text-primary hover:underline font-medium"
+                  className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
                 >
                   Inicia Sesión
                 </Link>
@@ -274,6 +338,16 @@ export default function Register() {
             </CardFooter>
           </form>
         </Card>
+
+        {/* Back to home */}
+        <div className="text-center">
+          <Link
+            to="/"
+            className="text-sm text-white/40 hover:text-white/70 transition-colors"
+          >
+            ← Volver al inicio
+          </Link>
+        </div>
       </div>
     </div>
   );

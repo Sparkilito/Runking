@@ -222,3 +222,84 @@ export function useDeleteComment() {
     },
   });
 }
+
+// Combined hook for like and save interactions (simplified API for feed)
+export function useInteractions() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  const toggleLike = useMutation({
+    mutationFn: async (rankingId: string) => {
+      if (!user) throw new Error('Must be logged in');
+
+      // Check if already liked
+      const { data: existingLike } = await supabase
+        .from('likes')
+        .select('id')
+        .eq('ranking_id', rankingId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (existingLike) {
+        // Remove like
+        const { error } = await supabase
+          .from('likes')
+          .delete()
+          .eq('ranking_id', rankingId)
+          .eq('user_id', user.id);
+
+        if (error) throw error;
+      } else {
+        // Add like
+        const { error } = await supabase
+          .from('likes')
+          .insert({ ranking_id: rankingId, user_id: user.id });
+
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rankings'] });
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
+    },
+  });
+
+  const toggleSave = useMutation({
+    mutationFn: async (rankingId: string) => {
+      if (!user) throw new Error('Must be logged in');
+
+      // Check if already saved
+      const { data: existingSave } = await supabase
+        .from('saved_rankings')
+        .select('id')
+        .eq('ranking_id', rankingId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (existingSave) {
+        // Remove save
+        const { error } = await supabase
+          .from('saved_rankings')
+          .delete()
+          .eq('ranking_id', rankingId)
+          .eq('user_id', user.id);
+
+        if (error) throw error;
+      } else {
+        // Add save
+        const { error } = await supabase
+          .from('saved_rankings')
+          .insert({ ranking_id: rankingId, user_id: user.id });
+
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rankings'] });
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
+      queryClient.invalidateQueries({ queryKey: ['saved'] });
+    },
+  });
+
+  return { toggleLike, toggleSave };
+}

@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Logo } from '@/components/Logo';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, Loader2, Mail, Lock, AlertCircle } from 'lucide-react';
+import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Eye, EyeOff, Loader2, Mail, Lock, AlertCircle, Crown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +20,8 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
+  const from =
+    (location.state as { from?: { pathname: string } })?.from?.pathname || "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,10 +32,10 @@ export default function Login() {
       const { error } = await signIn(email, password);
 
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          setError('Email o contraseña incorrectos');
-        } else if (error.message.includes('Email not confirmed')) {
-          setError('Por favor confirma tu email antes de iniciar sesión');
+        if (error.message.includes("Invalid login credentials")) {
+          setError("Email o contraseña incorrectos");
+        } else if (error.message.includes("Email not confirmed")) {
+          setError("Por favor confirma tu email antes de iniciar sesión");
         } else {
           setError(error.message);
         }
@@ -43,52 +44,73 @@ export default function Login() {
 
       navigate(from, { replace: true });
     } catch (err) {
-      setError('Ocurrió un error inesperado');
+      setError("Ocurrió un error inesperado");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-b from-background to-muted/20">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8 animate-fade-in">
         {/* Logo */}
-        <div className="flex flex-col items-center space-y-2">
-          <Logo size="lg" />
-          <p className="text-muted-foreground text-center">
-            Crea y comparte rankings de lo que más te apasiona
-          </p>
+        <div className="flex flex-col items-center space-y-4">
+          <Link to="/" className="flex items-center gap-3 group">
+            <div
+              className={cn(
+                "w-16 h-16 rounded-squircle-lg",
+                "bg-gradient-to-br from-solar-400 to-solar-600",
+                "flex items-center justify-center",
+                "shadow-glow-solar",
+                "transition-transform duration-300 group-hover:scale-110"
+              )}
+            >
+              <Crown className="w-8 h-8 text-midnight-300" />
+            </div>
+          </Link>
+          <div className="text-center">
+            <h1 className="font-display text-3xl font-bold text-white">
+              Run<span className="text-solar-400">King</span>
+            </h1>
+            <p className="text-white/50 mt-2">
+              Crea y comparte rankings de lo que más te apasiona
+            </p>
+          </div>
         </div>
 
         {/* Login Card */}
-        <Card className="border-border/50 shadow-lg">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Iniciar Sesión</CardTitle>
-            <CardDescription className="text-center">
-              Ingresa tus credenciales para continuar
-            </CardDescription>
+        <Card className="glass rounded-squircle-xl">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="font-display text-2xl text-center text-white">
+              Bienvenido de nuevo
+            </CardTitle>
           </CardHeader>
 
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               {error && (
-                <Alert variant="destructive" className="animate-scale-in">
+                <Alert
+                  variant="destructive"
+                  className="animate-scale-in bg-red-500/10 border-red-500/20 text-red-400"
+                >
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-white/80">
+                  Email
+                </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="tu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
+                    className="pl-11"
                     required
                     disabled={isLoading}
                   />
@@ -96,23 +118,25 @@ export default function Login() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Contraseña</Label>
+                <Label htmlFor="password" className="text-white/80">
+                  Contraseña
+                </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
                     id="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
+                    className="pl-11 pr-11"
                     required
                     disabled={isLoading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -124,10 +148,11 @@ export default function Login() {
               </div>
             </CardContent>
 
-            <CardFooter className="flex flex-col space-y-4">
+            <CardFooter className="flex flex-col space-y-4 pt-2">
               <Button
                 type="submit"
-                className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
+                size="lg"
+                className="w-full"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -136,15 +161,15 @@ export default function Login() {
                     Iniciando sesión...
                   </>
                 ) : (
-                  'Iniciar Sesión'
+                  "Iniciar Sesión"
                 )}
               </Button>
 
-              <p className="text-sm text-center text-muted-foreground">
-                ¿No tienes cuenta?{' '}
+              <p className="text-sm text-center text-white/50">
+                ¿No tienes cuenta?{" "}
                 <Link
                   to="/register"
-                  className="text-primary hover:underline font-medium"
+                  className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
                 >
                   Regístrate
                 </Link>
@@ -152,6 +177,16 @@ export default function Login() {
             </CardFooter>
           </form>
         </Card>
+
+        {/* Back to home */}
+        <div className="text-center">
+          <Link
+            to="/"
+            className="text-sm text-white/40 hover:text-white/70 transition-colors"
+          >
+            ← Volver al inicio
+          </Link>
+        </div>
       </div>
     </div>
   );

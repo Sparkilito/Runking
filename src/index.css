@@ -2,97 +2,97 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* ============================================
+   NEO-TANGIBLE DESIGN SYSTEM
+   "Clay & Glass" aesthetic for RunKing
+   ============================================ */
 
 @layer base {
   :root {
-    --background: 255 255 255;
+    /* Base colors - Light mode (not primary focus) */
+    --background: 0 0% 100%;
     --foreground: 240 10% 10%;
-
     --card: 0 0% 100%;
     --card-foreground: 240 10% 10%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 10%;
-
-    /* Vibrant purple gradient */
-    --primary: 262 83% 58%;
-    --primary-glow: 250 100% 70%;
-    --primary-dark: 262 70% 45%;
+    --primary: 271 81% 56%;
+    --primary-glow: 271 91% 65%;
+    --primary-dark: 271 70% 45%;
     --primary-foreground: 0 0% 100%;
-
-    /* Energetic orange accent */
-    --accent: 25 95% 53%;
-    --accent-glow: 33 100% 60%;
-    --accent-foreground: 0 0% 100%;
-
+    --accent: 45 100% 50%;
+    --accent-glow: 45 100% 60%;
+    --accent-foreground: 240 10% 10%;
     --secondary: 240 5% 96%;
     --secondary-foreground: 240 10% 10%;
-
     --muted: 240 5% 96%;
     --muted-foreground: 240 4% 46%;
-
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-
     --border: 240 6% 90%;
     --input: 240 6% 90%;
-    --ring: 262 83% 58%;
-
+    --ring: 271 81% 56%;
     --radius: 1rem;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(250 100% 70%));
-    --gradient-accent: linear-gradient(135deg, hsl(25 95% 53%), hsl(33 100% 60%));
-    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(250 100% 70%) 50%, hsl(33 100% 60%) 100%);
-    
+    --gradient-primary: linear-gradient(135deg, hsl(271 81% 56%), hsl(271 91% 65%));
+    --gradient-accent: linear-gradient(135deg, hsl(45 100% 50%), hsl(45 100% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(271 81% 56%) 0%, hsl(271 91% 65%) 50%, hsl(45 100% 50%) 100%);
+
     /* Shadows */
-    --shadow-glow: 0 8px 32px -8px hsl(262 83% 58% / 0.4);
-    --shadow-accent: 0 8px 32px -8px hsl(25 95% 53% / 0.4);
+    --shadow-glow: 0 8px 32px -8px hsl(271 81% 56% / 0.4);
+    --shadow-accent: 0 8px 32px -8px hsl(45 100% 50% / 0.4);
     --shadow-card: 0 2px 12px -4px hsl(240 10% 10% / 0.08);
-    
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
+  /* ============================================
+     DARK MODE - NEO-TANGIBLE PRIMARY THEME
+     Deep Midnight background with violet accents
+     ============================================ */
   .dark {
-    --background: 240 10% 8%;
+    /* Deep Midnight Background */
+    --background: 230 25% 8%;
     --foreground: 0 0% 98%;
 
-    --card: 240 8% 12%;
+    /* Card with glass effect base */
+    --card: 230 20% 12%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 8% 12%;
+    --popover: 230 20% 12%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 262 83% 58%;
-    --primary-glow: 250 100% 70%;
-    --primary-dark: 262 70% 45%;
+    /* Electric Purple - Primary brand color */
+    --primary: 271 81% 56%;
+    --primary-glow: 271 91% 65%;
+    --primary-dark: 271 70% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --accent: 25 95% 53%;
-    --accent-glow: 33 100% 60%;
-    --accent-foreground: 0 0% 100%;
+    /* Solar Yellow - CTA and highlights */
+    --accent: 45 100% 50%;
+    --accent-glow: 45 100% 60%;
+    --accent-foreground: 230 25% 8%;
 
-    --secondary: 240 6% 16%;
+    /* Secondary surfaces */
+    --secondary: 230 15% 16%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 6% 16%;
-    --muted-foreground: 240 5% 64%;
+    /* Muted elements */
+    --muted: 230 15% 18%;
+    --muted-foreground: 230 10% 55%;
 
+    /* Destructive */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 20%;
-    --input: 240 6% 20%;
-    --ring: 262 83% 58%;
+    /* Borders with subtle glow */
+    --border: 230 15% 22%;
+    --input: 230 15% 20%;
+    --ring: 271 81% 56%;
 
-    --shadow-glow: 0 8px 32px -8px hsl(262 83% 58% / 0.6);
-    --shadow-accent: 0 8px 32px -8px hsl(25 95% 53% / 0.6);
-    --shadow-card: 0 4px 16px -4px hsl(0 0% 0% / 0.4);
+    /* Enhanced shadows for dark mode */
+    --shadow-glow: 0 8px 32px -8px hsl(271 81% 56% / 0.5);
+    --shadow-accent: 0 8px 32px -8px hsl(45 100% 50% / 0.5);
+    --shadow-card: 0 4px 20px -4px hsl(0 0% 0% / 0.5);
   }
 }
 
@@ -101,7 +101,436 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body antialiased;
+    background: linear-gradient(135deg, #0F111A 0%, #1A1D2E 50%, #1E1535 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  /* Typography defaults */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold tracking-tight;
+  }
+
+  /* Selection styling */
+  ::selection {
+    background: rgba(168, 85, 247, 0.3);
+    color: white;
+  }
+}
+
+/* ============================================
+   GLASSMORPHISM 2.0 COMPONENTS
+   Frosted glass effect with subtle gradients
+   ============================================ */
+@layer components {
+  /* Glass Card - Main container style */
+  .glass {
+    @apply relative overflow-hidden;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    );
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 8px 32px 0 rgba(0, 0, 0, 0.37),
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-light {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.06) 100%
+    );
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .glass-strong {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0.08) 100%
+    );
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Glass with color tints */
+  .glass-purple {
+    background: linear-gradient(
+      135deg,
+      rgba(168, 85, 247, 0.15) 0%,
+      rgba(168, 85, 247, 0.05) 100%
+    );
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+  }
+
+  .glass-cyan {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 240, 255, 0.12) 0%,
+      rgba(0, 240, 255, 0.04) 100%
+    );
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+  }
+
+  .glass-solar {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 200, 0, 0.12) 0%,
+      rgba(255, 200, 0, 0.04) 100%
+    );
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 200, 0, 0.2);
+  }
+
+  /* ============================================
+     CLAYMORPHISM COMPONENTS
+     3D candy/vinyl buttons with depth
+     ============================================ */
+
+  /* Clay Button - Primary CTA style */
+  .clay-button {
+    @apply relative font-heading font-semibold transition-all duration-200;
+    background: linear-gradient(145deg, #FFC800, #E6B400);
+    box-shadow:
+      6px 6px 12px rgba(0, 0, 0, 0.4),
+      -3px -3px 8px rgba(255, 255, 255, 0.08),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.3),
+      inset -1px -1px 2px rgba(0, 0, 0, 0.1);
+    border: none;
+    transform: translateY(0);
+  }
+
+  .clay-button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      8px 8px 16px rgba(0, 0, 0, 0.45),
+      -4px -4px 10px rgba(255, 255, 255, 0.1),
+      inset 1px 1px 2px rgba(255, 255, 255, 0.35),
+      inset -1px -1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .clay-button:active {
+    transform: translateY(1px);
+    box-shadow:
+      inset 4px 4px 8px rgba(0, 0, 0, 0.3),
+      inset -2px -2px 6px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Clay Button variants */
+  .clay-button-purple {
+    background: linear-gradient(145deg, #A855F7, #9333EA);
+    color: white;
+  }
+
+  .clay-button-cyan {
+    background: linear-gradient(145deg, #00F0FF, #00C0CC);
+    color: #0F111A;
+  }
+
+  .clay-button-secondary {
+    background: linear-gradient(145deg, #2D2D3A, #1F1F28);
+    color: white;
+    box-shadow:
+      4px 4px 10px rgba(0, 0, 0, 0.5),
+      -2px -2px 6px rgba(255, 255, 255, 0.05),
+      inset 1px 1px 1px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Clay Card - Elevated surfaces */
+  .clay-card {
+    @apply relative;
+    background: linear-gradient(145deg, #1E1E2A, #15151F);
+    box-shadow:
+      8px 8px 20px rgba(0, 0, 0, 0.5),
+      -4px -4px 12px rgba(255, 255, 255, 0.03),
+      inset 1px 1px 1px rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* ============================================
+     PODIUM COMPONENTS
+     Visual podium for Top 3 rankings
+     ============================================ */
+
+  /* Podium positions */
+  .podium-gold {
+    @apply relative;
+    background: linear-gradient(145deg, #FFD700 0%, #FFC800 50%, #E6B400 100%);
+    box-shadow:
+      0 8px 32px rgba(255, 200, 0, 0.5),
+      0 0 60px rgba(255, 200, 0, 0.3),
+      inset 0 2px 4px rgba(255, 255, 255, 0.4),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .podium-silver {
+    @apply relative;
+    background: linear-gradient(145deg, #E8E8E8 0%, #C0C0C0 50%, #A8A8A8 100%);
+    box-shadow:
+      0 8px 32px rgba(192, 192, 192, 0.4),
+      0 0 40px rgba(192, 192, 192, 0.2),
+      inset 0 2px 4px rgba(255, 255, 255, 0.5),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .podium-bronze {
+    @apply relative;
+    background: linear-gradient(145deg, #D4956A 0%, #CD7F32 50%, #B8722E 100%);
+    box-shadow:
+      0 8px 32px rgba(205, 127, 50, 0.4),
+      0 0 40px rgba(205, 127, 50, 0.2),
+      inset 0 2px 4px rgba(255, 255, 255, 0.3),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Podium number badges */
+  .podium-badge {
+    @apply absolute -top-3 -right-3 w-8 h-8 flex items-center justify-center font-display font-bold text-sm;
+    border-radius: 50%;
+  }
+
+  .podium-badge-gold {
+    background: linear-gradient(145deg, #FFD700, #E6B400);
+    color: #1A1D2E;
+    box-shadow: 0 4px 12px rgba(255, 200, 0, 0.5);
+  }
+
+  .podium-badge-silver {
+    background: linear-gradient(145deg, #E8E8E8, #A8A8A8);
+    color: #1A1D2E;
+    box-shadow: 0 4px 12px rgba(192, 192, 192, 0.5);
+  }
+
+  .podium-badge-bronze {
+    background: linear-gradient(145deg, #D4956A, #B8722E);
+    color: white;
+    box-shadow: 0 4px 12px rgba(205, 127, 50, 0.5);
+  }
+
+  /* ============================================
+     SQUIRCLE SHAPES
+     iOS-style super-ellipse corners
+     ============================================ */
+
+  .squircle {
+    border-radius: 20px;
+  }
+
+  .squircle-md {
+    border-radius: 24px;
+  }
+
+  .squircle-lg {
+    border-radius: 32px;
+  }
+
+  .squircle-xl {
+    border-radius: 40px;
+  }
+
+  /* ============================================
+     GLOW EFFECTS
+     Neon-style glowing elements
+     ============================================ */
+
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4), 0 0 40px rgba(168, 85, 247, 0.2);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), 0 0 40px rgba(0, 240, 255, 0.2);
+  }
+
+  .glow-solar {
+    box-shadow: 0 0 20px rgba(255, 200, 0, 0.4), 0 0 40px rgba(255, 200, 0, 0.2);
+  }
+
+  /* Text glow effects */
+  .text-glow-purple {
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.6), 0 0 40px rgba(168, 85, 247, 0.3);
+  }
+
+  .text-glow-cyan {
+    text-shadow: 0 0 20px rgba(0, 240, 255, 0.6), 0 0 40px rgba(0, 240, 255, 0.3);
+  }
+
+  .text-glow-solar {
+    text-shadow: 0 0 20px rgba(255, 200, 0, 0.6), 0 0 40px rgba(255, 200, 0, 0.3);
+  }
+
+  /* ============================================
+     INTERACTIVE STATES
+     Hover, focus, and active states
+     ============================================ */
+
+  .interactive-scale {
+    @apply transition-transform duration-200 ease-spring;
+  }
+
+  .interactive-scale:hover {
+    transform: scale(1.02);
+  }
+
+  .interactive-scale:active {
+    transform: scale(0.98);
+  }
+
+  .interactive-lift {
+    @apply transition-all duration-200 ease-spring;
+  }
+
+  .interactive-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  /* ============================================
+     RANK ITEM STYLES
+     Draggable ranking items
+     ============================================ */
+
+  .rank-item {
+    @apply glass rounded-squircle-lg p-4 flex items-center gap-4;
+    @apply transition-all duration-300 ease-spring;
+    cursor: grab;
+  }
+
+  .rank-item:active {
+    cursor: grabbing;
+  }
+
+  .rank-item.dragging {
+    @apply scale-105 shadow-glass-lg;
+    opacity: 0.9;
+    z-index: 50;
+  }
+
+  .rank-item-number {
+    @apply w-10 h-10 flex items-center justify-center;
+    @apply font-display font-bold text-lg;
+    @apply rounded-full;
+  }
+
+  /* ============================================
+     FORM INPUTS - Glass style
+     ============================================ */
+
+  .input-glass {
+    @apply w-full px-4 py-3 rounded-squircle;
+    @apply bg-white/5 border border-white/10;
+    @apply text-white placeholder:text-white/40;
+    @apply focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20;
+    @apply transition-all duration-200;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .input-glass:hover {
+    @apply bg-white/8 border-white/15;
+  }
+
+  /* ============================================
+     SCROLLBAR STYLING
+     Custom scrollbar for glass aesthetic
+     ============================================ */
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(168, 85, 247, 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(168, 85, 247, 0.5);
+  }
+
+  /* ============================================
+     UTILITY ANIMATIONS
+     ============================================ */
+
+  .animate-in {
+    animation: fade-in 0.4s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.4s ease-out;
+  }
+
+  .animate-bounce-in {
+    animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  /* Stagger animation delays */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+
+  /* ============================================
+     CROWN ANIMATION for #1 ranking
+     ============================================ */
+
+  .crown {
+    @apply animate-crown-bounce;
+    filter: drop-shadow(0 4px 12px rgba(255, 200, 0, 0.5));
+  }
+
+  /* ============================================
+     CATEGORY PILLS
+     ============================================ */
+
+  .category-pill {
+    @apply px-4 py-2 rounded-full text-sm font-medium;
+    @apply glass-light transition-all duration-200;
+  }
+
+  .category-pill:hover {
+    @apply glass-strong;
+  }
+
+  .category-pill.active {
+    @apply bg-purple-500/30 border-purple-500/50;
+  }
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+@media (max-width: 640px) {
+  .squircle-lg {
+    border-radius: 24px;
+  }
+
+  .squircle-xl {
+    border-radius: 32px;
   }
 }
