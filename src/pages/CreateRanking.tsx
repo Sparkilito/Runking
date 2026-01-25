@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
-import { ArrowLeft, Plus, Sparkles, AlertCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowLeft, Plus, Sparkles, AlertCircle, Loader2 } from "lucide-react";
 import {
   DndContext,
   closestCenter,
@@ -28,25 +29,17 @@ import {
 } from "@/components/DraggableRankingItem";
 import { PodiumCard } from "@/components/PodiumCard";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-
-const CATEGORIES = [
-  "Gastronomía",
-  "Cine",
-  "Música",
-  "Deportes",
-  "Tecnología",
-  "Viajes",
-  "Libros",
-  "Series",
-  "Gaming",
-  "Arte",
-];
+import { useCategories } from "@/hooks/useCategories";
+import { useCreateRanking } from "@/hooks/useRankings";
 
 const CreateRanking = () => {
   const navigate = useNavigate();
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const createRanking = useCreateRanking();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [newItemTitle, setNewItemTitle] = useState("");
   const [items, setItems] = useState<RankingItemData[]>([]);
   const [showPreview, setShowPreview] = useState(false);
@@ -70,12 +63,12 @@ const CreateRanking = () => {
         const oldIndex = items.findIndex((item) => item.id === active.id);
         const newIndex = items.findIndex((item) => item.id === over.id);
         const newItems = arrayMove(items, oldIndex, newIndex);
-        
+
         // Haptic feedback if available
         if (navigator.vibrate) {
           navigator.vibrate(50);
         }
-        
+
         return newItems;
       });
     }
@@ -110,13 +103,13 @@ const CreateRanking = () => {
     );
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     if (!title.trim()) {
       toast.error("Dale un título a tu ranking");
       return;
     }
 
-    if (!category) {
+    if (!categoryId) {
       toast.error("Selecciona una categoría");
       return;
     }
@@ -126,10 +119,30 @@ const CreateRanking = () => {
       return;
     }
 
-    toast.success("¡Ranking publicado! 🎉👑", {
-      description: "Tu ranking ya está en vivo",
-    });
-    setTimeout(() => navigate("/"), 1500);
+    try {
+      await createRanking.mutateAsync({
+        ranking: {
+          title: title.trim(),
+          description: description.trim() || null,
+          category_id: categoryId,
+          is_published: true,
+        },
+        items: items.map((item) => ({
+          title: item.title,
+          image_url: item.imageUrl || null,
+          link_url: item.linkUrl || null,
+          position: 0, // Will be set by the mutation
+        })),
+      });
+
+      toast.success("¡Ranking publicado! 🎉👑", {
+        description: "Tu ranking ya está en vivo",
+      });
+      navigate("/");
+    } catch (error) {
+      toast.error("Error al publicar el ranking");
+      console.error(error);
+    }
   };
 
   const canShowPodium = items.length >= 3;
@@ -152,10 +165,17 @@ const CreateRanking = () => {
           <div className="flex-1" />
           <Button
             onClick={handlePublish}
-            disabled={!title || !category || items.length < 3}
+            disabled={!title || !categoryId || items.length < 3 || createRanking.isPending}
             className="bg-gradient-primary text-primary-foreground font-bold shadow-glow hover:scale-105 transition-transform"
           >
-            Publicar
+            {createRanking.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Publicando...
+              </>
+            ) : (
+              "Publicar"
+            )}
           </Button>
         </div>
       </header>
@@ -243,21 +263,29 @@ const CreateRanking = () => {
               {/* Categories */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold">Categoría</label>
-                <div className="flex flex-wrap gap-2">
-                  {CATEGORIES.map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => setCategory(cat)}
-                      className={`px-4 py-2 rounded-full font-medium transition-all ${
-                        category === cat
-                          ? "bg-primary text-primary-foreground shadow-glow scale-105"
-                          : "bg-muted hover:bg-muted/80"
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
+                {categoriesLoading ? (
+                  <div className="flex flex-wrap gap-2">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Skeleton key={i} className="h-10 w-24 rounded-full" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {categories?.map((cat) => (
+                      <button
+                        key={cat.id}
+                        onClick={() => setCategoryId(cat.id)}
+                        className={`px-4 py-2 rounded-full font-medium transition-all ${
+                          categoryId === cat.id
+                            ? "bg-primary text-primary-foreground shadow-glow scale-105"
+                            : "bg-muted hover:bg-muted/80"
+                        }`}
+                      >
+                        {cat.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -376,11 +404,18 @@ const CreateRanking = () => {
         <div className="sticky bottom-20 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent">
           <Button
             onClick={handlePublish}
-            disabled={!title || !category || items.length < 3}
+            disabled={!title || !categoryId || items.length < 3 || createRanking.isPending}
             size="lg"
             className="w-full bg-gradient-primary text-primary-foreground font-bold text-lg shadow-glow hover:scale-105 transition-transform"
           >
-            Publicar Ranking
+            {createRanking.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Publicando...
+              </>
+            ) : (
+              "Publicar Ranking"
+            )}
           </Button>
         </div>
       </main>
