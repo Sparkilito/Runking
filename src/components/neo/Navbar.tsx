@@ -19,15 +19,12 @@ export function Navbar() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-squircle bg-gradient-to-br from-solar-400 to-solar-600 flex items-center justify-center shadow-glow-solar transition-transform duration-300 group-hover:scale-110">
-                <span className="font-display font-bold text-midnight-300 text-lg">
-                  R
-                </span>
-              </div>
-              <span className="font-display font-bold text-xl text-white hidden sm:block">
-                Run<span className="text-solar-400">King</span>
-              </span>
+            <Link to="/" className="flex items-center group">
+              <img
+                src="/logo.png"
+                alt="RunKing"
+                className="h-10 object-contain transition-transform duration-300 group-hover:scale-105"
+              />
             </Link>
 
             {/* Search - Desktop */}

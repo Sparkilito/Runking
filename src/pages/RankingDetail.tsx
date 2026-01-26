@@ -1,8 +1,6 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Logo } from "@/components/Logo";
-import { PodiumCard } from "@/components/PodiumCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,6 +15,7 @@ import {
   MoreVertical,
   Flag,
   Trash2,
+  Trophy,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -39,6 +38,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Podium } from "@/components/neo/Podium";
+import { BottomNav } from "@/components/neo";
 
 const RankingDetail = () => {
   const { id } = useParams();
@@ -156,50 +157,51 @@ const RankingDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background pb-20">
-        <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
+      <div className="min-h-screen bg-midnight pb-24">
+        <header className="sticky top-0 z-40 glass border-b border-white/10">
           <div className="max-w-screen-xl mx-auto px-4 py-4 flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2">
+            <Button variant="secondary" size="sm" onClick={() => navigate(-1)} className="gap-2">
               <ArrowLeft className="w-4 h-4" />
               Atrás
             </Button>
-            <Logo size="sm" />
           </div>
         </header>
         <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
-          <Skeleton className="h-8 w-24" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-8 w-24 bg-white/10" />
+          <Skeleton className="h-10 w-full bg-white/10" />
+          <Skeleton className="h-20 w-full bg-white/10" />
           <div className="flex gap-2">
-            <Skeleton className="h-12 flex-1" />
-            <Skeleton className="h-12 flex-1" />
-            <Skeleton className="h-12 w-12" />
-            <Skeleton className="h-12 w-12" />
+            <Skeleton className="h-12 flex-1 bg-white/10" />
+            <Skeleton className="h-12 flex-1 bg-white/10" />
+            <Skeleton className="h-12 w-12 bg-white/10" />
+            <Skeleton className="h-12 w-12 bg-white/10" />
           </div>
         </main>
+        <BottomNav />
       </div>
     );
   }
 
   if (error || !ranking) {
     return (
-      <div className="min-h-screen bg-background pb-20">
-        <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
+      <div className="min-h-screen bg-midnight pb-24">
+        <header className="sticky top-0 z-40 glass border-b border-white/10">
           <div className="max-w-screen-xl mx-auto px-4 py-4 flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2">
+            <Button variant="secondary" size="sm" onClick={() => navigate(-1)} className="gap-2">
               <ArrowLeft className="w-4 h-4" />
               Atrás
             </Button>
-            <Logo size="sm" />
           </div>
         </header>
         <main className="max-w-3xl mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold mb-2">Ranking no encontrado</h1>
-          <p className="text-muted-foreground mb-4">
+          <Trophy className="w-20 h-20 mx-auto text-white/20 mb-4" />
+          <h1 className="text-2xl font-bold text-white mb-2">Ranking no encontrado</h1>
+          <p className="text-white/60 mb-4">
             Este ranking no existe o fue eliminado
           </p>
           <Button onClick={() => navigate("/")}>Volver al inicio</Button>
         </main>
+        <BottomNav />
       </div>
     );
   }
@@ -207,30 +209,29 @@ const RankingDetail = () => {
   const isOwner = user?.id === ranking.user_id;
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-midnight pb-24">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
+      <header className="sticky top-0 z-40 glass border-b border-white/10">
         <div className="max-w-screen-xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2">
+          <Button variant="secondary" size="sm" onClick={() => navigate(-1)} className="gap-2">
             <ArrowLeft className="w-4 h-4" />
             Atrás
           </Button>
-          <Logo size="sm" />
           <div className="flex-1" />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="secondary" size="icon">
                 <MoreVertical className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="glass">
               {isOwner ? (
-                <DropdownMenuItem className="text-destructive">
+                <DropdownMenuItem className="text-red-400">
                   <Trash2 className="w-4 h-4 mr-2" />
                   Eliminar ranking
                 </DropdownMenuItem>
               ) : (
-                <DropdownMenuItem>
+                <DropdownMenuItem className="text-white/80">
                   <Flag className="w-4 h-4 mr-2" />
                   Reportar
                 </DropdownMenuItem>
@@ -244,59 +245,63 @@ const RankingDetail = () => {
         {/* Ranking info */}
         <div className="space-y-4">
           <div className="space-y-2">
-            <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-semibold">
+            <span className="category-pill">
               {ranking.category_name}
             </span>
-            <h1 className="text-3xl font-black leading-tight">{ranking.title}</h1>
+            <h1 className="text-3xl font-heading font-black leading-tight text-white">
+              {ranking.title}
+            </h1>
             {ranking.description && (
-              <p className="text-muted-foreground">{ranking.description}</p>
+              <p className="text-white/70">{ranking.description}</p>
             )}
           </div>
 
           {/* Author */}
-          <div className="flex items-center justify-between">
-            <Link to={`/user/${ranking.author_username}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <Avatar className="w-10 h-10">
-                <AvatarImage src={ranking.author_avatar_url || undefined} />
-                <AvatarFallback className="bg-gradient-primary text-primary-foreground font-bold">
-                  {(ranking.author_display_name || ranking.author_username).charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-semibold">{ranking.author_display_name || ranking.author_username}</p>
-                <p className="text-sm text-muted-foreground">
-                  {formatDistanceToNow(new Date(ranking.created_at), {
-                    addSuffix: true,
-                    locale: es,
-                  })}
-                </p>
-              </div>
-            </Link>
+          <Card variant="glass" className="p-4">
+            <div className="flex items-center justify-between">
+              <Link to={`/user/${ranking.author_username}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <Avatar className="w-12 h-12 border-2 border-purple/50">
+                  <AvatarImage src={ranking.author_avatar_url || undefined} />
+                  <AvatarFallback className="bg-purple text-white font-bold">
+                    {(ranking.author_display_name || ranking.author_username).charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-semibold text-white">{ranking.author_display_name || ranking.author_username}</p>
+                  <p className="text-sm text-white/60">
+                    {formatDistanceToNow(new Date(ranking.created_at), {
+                      addSuffix: true,
+                      locale: es,
+                    })}
+                  </p>
+                </div>
+              </Link>
 
-            {!isOwner && (
-              <Button
-                variant={isFollowing ? "outline" : "default"}
-                size="sm"
-                onClick={handleFollow}
-                disabled={toggleFollow.isPending}
-              >
-                {toggleFollow.isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : isFollowing ? (
-                  "Siguiendo"
-                ) : (
-                  "Seguir"
-                )}
-              </Button>
-            )}
-          </div>
+              {!isOwner && (
+                <Button
+                  variant={isFollowing ? "secondary" : "primary"}
+                  size="sm"
+                  onClick={handleFollow}
+                  disabled={toggleFollow.isPending}
+                >
+                  {toggleFollow.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : isFollowing ? (
+                    "Siguiendo"
+                  ) : (
+                    "Seguir"
+                  )}
+                </Button>
+              )}
+            </div>
+          </Card>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 pt-2">
+          <div className="flex items-center gap-2">
             <Button
-              variant="outline"
+              variant="secondary"
               size="lg"
-              className={`flex-1 gap-2 ${hasLiked && "text-destructive border-destructive"}`}
+              className={`flex-1 gap-2 ${hasLiked && "text-red-400 border-red-400/50"}`}
               onClick={handleLike}
               disabled={toggleLike.isPending}
             >
@@ -304,22 +309,22 @@ const RankingDetail = () => {
               <span className="font-semibold">{ranking.likes_count}</span>
             </Button>
 
-            <Button variant="outline" size="lg" className="flex-1 gap-2">
+            <Button variant="secondary" size="lg" className="flex-1 gap-2">
               <MessageCircle className="w-5 h-5" />
               <span className="font-semibold">{ranking.comments_count}</span>
             </Button>
 
             <Button
-              variant="outline"
+              variant="secondary"
               size="lg"
-              className={`gap-2 ${hasSaved && "text-primary border-primary"}`}
+              className={`gap-2 ${hasSaved && "text-cyan border-cyan/50"}`}
               onClick={handleSave}
               disabled={toggleSave.isPending}
             >
               <Bookmark className="w-5 h-5" fill={hasSaved ? "currentColor" : "none"} />
             </Button>
 
-            <Button variant="outline" size="lg" className="gap-2" onClick={handleShare}>
+            <Button variant="secondary" size="lg" className="gap-2" onClick={handleShare}>
               <Share2 className="w-5 h-5" />
             </Button>
           </div>
@@ -327,9 +332,12 @@ const RankingDetail = () => {
 
         {/* Podium */}
         {ranking.items && ranking.items.length >= 3 && (
-          <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5">
-            <h2 className="text-xl font-bold mb-4 text-center">Top 3</h2>
-            <PodiumCard
+          <Card variant="glass" className="p-6">
+            <h2 className="text-xl font-heading font-bold mb-6 text-center text-white flex items-center justify-center gap-2">
+              <Trophy className="w-6 h-6 text-solar" />
+              Top 3
+            </h2>
+            <Podium
               items={ranking.items.slice(0, 3).map((item) => ({
                 position: item.position,
                 title: item.title,
@@ -341,18 +349,18 @@ const RankingDetail = () => {
 
         {/* Rest of the list */}
         {ranking.items && ranking.items.length > 3 && (
-          <Card className="p-6">
-            <h2 className="text-xl font-bold mb-4">Ranking completo</h2>
+          <Card variant="glass" className="p-6">
+            <h2 className="text-xl font-heading font-bold mb-4 text-white">Ranking completo</h2>
             <div className="space-y-3">
               {ranking.items.slice(3).map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-4 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                  className="flex items-center gap-4 p-3 rounded-squircle glass hover:bg-white/10 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center text-primary-foreground font-bold flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-purple/30 flex items-center justify-center text-white font-bold flex-shrink-0">
                     {item.position}
                   </div>
-                  <p className="font-medium flex-1">{item.title}</p>
+                  <p className="font-medium flex-1 text-white">{item.title}</p>
                 </div>
               ))}
             </div>
@@ -360,8 +368,8 @@ const RankingDetail = () => {
         )}
 
         {/* Comments */}
-        <Card className="p-6">
-          <h2 className="text-xl font-bold mb-4">
+        <Card variant="glass" className="p-6">
+          <h2 className="text-xl font-heading font-bold mb-4 text-white">
             Comentarios ({ranking.comments_count})
           </h2>
 
@@ -394,7 +402,7 @@ const RankingDetail = () => {
                 <div key={comment.id} className="flex gap-3">
                   <Avatar className="w-8 h-8">
                     <AvatarImage src={comment.profiles?.avatar_url || undefined} />
-                    <AvatarFallback className="text-xs">
+                    <AvatarFallback className="bg-purple/50 text-white text-xs">
                       {(comment.profiles?.display_name || comment.profiles?.username || "?")
                         .charAt(0)
                         .toUpperCase()}
@@ -402,28 +410,30 @@ const RankingDetail = () => {
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">
+                      <span className="font-semibold text-sm text-white">
                         {comment.profiles?.display_name || comment.profiles?.username}
                       </span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-white/50">
                         {formatDistanceToNow(new Date(comment.created_at), {
                           addSuffix: true,
                           locale: es,
                         })}
                       </span>
                     </div>
-                    <p className="text-sm mt-1">{comment.content}</p>
+                    <p className="text-sm mt-1 text-white/80">{comment.content}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-center text-muted-foreground py-8">
+            <p className="text-center text-white/50 py-8">
               Sé el primero en comentar
             </p>
           )}
         </Card>
       </main>
+
+      <BottomNav />
     </div>
   );
 };
