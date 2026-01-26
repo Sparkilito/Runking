@@ -2,9 +2,11 @@ import { cn } from "@/lib/utils";
 import { Crown } from "lucide-react";
 
 interface PodiumItem {
-  id: string;
+  id?: string;
+  position?: number;
   title: string;
   image?: string;
+  imageUrl?: string;
   subtitle?: string;
 }
 
@@ -14,8 +16,12 @@ interface PodiumProps {
 }
 
 export function Podium({ items, className }: PodiumProps) {
+  // Ensure we have at least 3 items
+  const safeItems = items.slice(0, 3);
+  if (safeItems.length < 3) return null;
+
   // Reorganize items: [2nd, 1st, 3rd] for visual display
-  const [first, second, third] = items;
+  const [first, second, third] = safeItems;
   const displayOrder = [second, first, third].filter(Boolean);
 
   const getPodiumStyles = (position: number) => {
@@ -65,10 +71,12 @@ export function Podium({ items, className }: PodiumProps) {
         if (!item) return null;
         const position = index === 1 ? 1 : index === 0 ? 2 : 3;
         const styles = getPodiumStyles(position);
+        const itemKey = item.id || `podium-${position}`;
+        const itemImage = item.image || item.imageUrl;
 
         return (
           <div
-            key={item.id}
+            key={itemKey}
             className={cn(
               "flex flex-col items-center animate-podium-rise",
               styles.container
@@ -91,9 +99,9 @@ export function Podium({ items, className }: PodiumProps) {
               )}
 
               {/* Image or placeholder */}
-              {item.image ? (
+              {itemImage ? (
                 <img
-                  src={item.image}
+                  src={itemImage}
                   alt={item.title}
                   className="w-full aspect-square object-cover rounded-squircle mb-2"
                 />
@@ -152,9 +160,11 @@ export function Podium({ items, className }: PodiumProps) {
 
 // Mini podium for cards
 export function MiniPodium({ items, className }: PodiumProps) {
+  const safeItems = items.slice(0, 3);
+
   return (
     <div className={cn("flex items-end justify-center gap-1", className)}>
-      {items.slice(0, 3).map((item, index) => {
+      {safeItems.map((item, index) => {
         const position = index + 1;
         const heights = ["h-10", "h-8", "h-6"];
         const colors = [
@@ -162,14 +172,16 @@ export function MiniPodium({ items, className }: PodiumProps) {
           "bg-gradient-to-t from-gray-400 to-gray-300",
           "bg-gradient-to-t from-amber-700 to-amber-600",
         ];
+        const itemKey = item.id || `mini-${position}`;
+        const itemImage = item.image || item.imageUrl;
 
         return (
-          <div key={item.id} className="flex flex-col items-center">
-            {item.image ? (
+          <div key={itemKey} className="flex flex-col items-center">
+            {itemImage ? (
               <img
-                src={item.image}
+                src={itemImage}
                 alt={item.title}
-                className="w-6 h-6 rounded-full ring-1 ring-white/20 mb-1"
+                className="w-6 h-6 rounded-full ring-1 ring-white/20 mb-1 object-cover"
               />
             ) : (
               <div

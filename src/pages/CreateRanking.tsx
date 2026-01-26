@@ -281,7 +281,7 @@ const CreateRanking = () => {
   ];
 
   return (
-    <div className="min-h-screen pb-32">
+    <div className="min-h-screen bg-midnight pb-32">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/5">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-4">
@@ -352,7 +352,7 @@ const CreateRanking = () => {
         </div>
 
         {/* Basic Info Card */}
-        <Card className="p-6 space-y-5">
+        <Card variant="glass" className="p-6 space-y-5">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-squircle bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center flex-shrink-0 shadow-glow-purple">
               <Sparkles className="w-6 h-6 text-white" />
@@ -428,7 +428,7 @@ const CreateRanking = () => {
         </Card>
 
         {/* Add Items Card */}
-        <Card className="p-6 space-y-4">
+        <Card variant="glass" className="p-6 space-y-4">
           <div>
             <h2 className="font-display text-xl font-bold text-white mb-1">
               Agrega tus ítems
@@ -482,7 +482,7 @@ const CreateRanking = () => {
 
         {/* Empty State */}
         {items.length === 0 && (
-          <Card className="p-12 text-center">
+          <Card variant="glass" className="p-12 text-center">
             <div className="space-y-4">
               <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto">
                 <Plus className="w-10 h-10 text-white/30" />
@@ -501,7 +501,7 @@ const CreateRanking = () => {
 
         {/* Preview Podium */}
         {items.length >= 3 && (
-          <Card className="p-6 glass-purple">
+          <Card variant="glass" className="p-6">
             <div className="text-center mb-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-solar-500/20 mb-4">
                 <Crown className="w-4 h-4 text-solar-400" />
