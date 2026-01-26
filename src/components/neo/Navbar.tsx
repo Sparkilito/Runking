@@ -4,14 +4,12 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useUnreadNotificationsCount } from "@/hooks/useNotifications";
 
 export function Navbar() {
   const { user, profile } = useAuth();
-  const { data: notifications } = useNotifications();
+  const { data: unreadCount = 0 } = useUnreadNotificationsCount();
   const location = useLocation();
-
-  const unreadCount = notifications?.filter((n) => !n.is_read).length || 0;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
