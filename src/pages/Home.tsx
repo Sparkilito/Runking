@@ -4,9 +4,9 @@ import { Plus, Crown, Heart, MessageCircle, Share2, Bookmark, Trophy, RefreshCw 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Navbar, BottomNav } from "@/components/neo/Navbar";
 import { MiniPodium } from "@/components/neo/Podium";
+import { InlineLoader } from "@/components/neo/LoadingSpinner";
 import { useFeedRankings } from "@/hooks/useRankings";
 import { useCategories } from "@/hooks/useCategories";
 import { useAuth } from "@/contexts/AuthContext";
@@ -176,21 +176,7 @@ const Home = () => {
 
           {/* Loading state */}
           {isLoading && (
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} variant="glass" className="p-4">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Skeleton className="w-10 h-10 rounded-full bg-white/10" />
-                    <div className="flex-1">
-                      <Skeleton className="h-4 w-32 mb-1 bg-white/10" />
-                      <Skeleton className="h-3 w-20 bg-white/10" />
-                    </div>
-                  </div>
-                  <Skeleton className="h-6 w-3/4 mb-2 bg-white/10" />
-                  <Skeleton className="h-32 w-full mb-4 rounded-xl bg-white/10" />
-                </Card>
-              ))}
-            </div>
+            <InlineLoader text="Cargando rankings..." />
           )}
 
           {/* Error state */}

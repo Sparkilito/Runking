@@ -4,7 +4,6 @@ import { Settings, Grid3x3, Heart, Bookmark, LogOut, Shield, Loader2, Edit3 } fr
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -27,7 +26,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserRankings } from "@/hooks/useRankings";
 import { useUserStats, useLikedRankings, useSavedRankings } from "@/hooks/useProfile";
 import { toast } from "sonner";
-import { Navbar, BottomNav } from "@/components/neo";
+import { Navbar, BottomNav, InlineLoader } from "@/components/neo";
 import { MiniPodium } from "@/components/neo/Podium";
 
 const Profile = () => {
@@ -242,14 +241,7 @@ const Profile = () => {
 
         {/* Rankings Grid */}
         {currentLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3].map((i) => (
-              <Card key={i} variant="glass" className="p-4 space-y-3">
-                <Skeleton className="h-4 w-3/4 bg-white/10" />
-                <Skeleton className="h-3 w-1/2 bg-white/10" />
-              </Card>
-            ))}
-          </div>
+          <InlineLoader text="Cargando..." />
         ) : currentRankings && currentRankings.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentRankings.map((ranking: any, index: number) => (

@@ -39,7 +39,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Podium } from "@/components/neo/Podium";
-import { BottomNav } from "@/components/neo";
+import { BottomNav, LoadingScreen } from "@/components/neo";
 
 const RankingDetail = () => {
   const { id } = useParams();
@@ -156,30 +156,7 @@ const RankingDetail = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-midnight pb-24">
-        <header className="sticky top-0 z-40 glass border-b border-white/10">
-          <div className="max-w-screen-xl mx-auto px-4 py-4 flex items-center gap-3">
-            <Button variant="secondary" size="sm" onClick={() => navigate(-1)} className="gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              Atrás
-            </Button>
-          </div>
-        </header>
-        <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
-          <Skeleton className="h-8 w-24 bg-white/10" />
-          <Skeleton className="h-10 w-full bg-white/10" />
-          <Skeleton className="h-20 w-full bg-white/10" />
-          <div className="flex gap-2">
-            <Skeleton className="h-12 flex-1 bg-white/10" />
-            <Skeleton className="h-12 flex-1 bg-white/10" />
-            <Skeleton className="h-12 w-12 bg-white/10" />
-            <Skeleton className="h-12 w-12 bg-white/10" />
-          </div>
-        </main>
-        <BottomNav />
-      </div>
-    );
+    return <LoadingScreen text="Cargando ranking..." />;
   }
 
   if (error || !ranking) {

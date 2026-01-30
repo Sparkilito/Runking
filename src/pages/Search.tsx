@@ -8,7 +8,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useSearchRankings } from "@/hooks/useRankings";
 import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Navbar, BottomNav } from "@/components/neo";
+import { Navbar, BottomNav, InlineLoader } from "@/components/neo";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
@@ -174,19 +174,7 @@ const Search = () => {
 
         {/* Loading state */}
         {showResults && isLoading && (
-          <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <Card key={i} variant="glass" className="p-4">
-                <div className="flex items-center gap-3">
-                  <Skeleton className="w-12 h-12 rounded-full bg-white/10" />
-                  <div className="flex-1">
-                    <Skeleton className="h-4 w-3/4 mb-2 bg-white/10" />
-                    <Skeleton className="h-3 w-1/2 bg-white/10" />
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
+          <InlineLoader text="Buscando..." />
         )}
 
         {/* Search results */}
