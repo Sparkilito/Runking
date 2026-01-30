@@ -82,7 +82,7 @@ const Search = () => {
     <div className="min-h-screen bg-midnight pb-24">
       <Navbar />
 
-      <main className="max-w-screen-xl mx-auto px-4 pt-20 pb-6 space-y-6">
+      <main className="max-w-screen-xl mx-auto px-4 pt-24 pb-6 space-y-6">
         {/* Search input */}
         <div className="relative">
           <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />

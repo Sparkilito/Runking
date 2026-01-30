@@ -93,7 +93,7 @@ const Profile = () => {
     <div className="min-h-screen bg-midnight pb-24">
       <Navbar />
 
-      <main className="max-w-screen-xl mx-auto px-4 pt-20 pb-6 space-y-6">
+      <main className="max-w-screen-xl mx-auto px-4 pt-24 pb-6 space-y-6">
         {/* Profile Card */}
         <Card variant="glass" className="p-6">
           <div className="flex items-start justify-between mb-4">

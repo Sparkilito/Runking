@@ -86,7 +86,7 @@ const Home = () => {
       <Navbar />
 
       {/* Main Content */}
-      <main className="pt-20">
+      <main className="pt-24">
         {/* Hero Section - Only for guests */}
         {!user && (
           <section className="px-4 py-12 text-center">
