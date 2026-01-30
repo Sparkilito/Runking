@@ -16,6 +16,20 @@ import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
+// Map icon names to emojis
+const categoryEmojis: Record<string, string> = {
+  "utensils": "🍽️",
+  "film": "🎬",
+  "music": "🎵",
+  "trophy": "🏆",
+  "laptop": "💻",
+  "plane": "✈️",
+  "book-open": "📚",
+  "tv": "📺",
+  "gamepad-2": "🎮",
+  "palette": "🎨",
+};
+
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -131,7 +145,7 @@ const Home = () => {
                   selectedCategory === cat.slug ? "bg-purple text-white" : ""
                 )}
               >
-                {cat.icon} {cat.name}
+                {categoryEmojis[cat.icon] || "📋"} {cat.name}
               </button>
             ))}
           </div>

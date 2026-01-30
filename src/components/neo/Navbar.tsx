@@ -1,4 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Bell, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,15 @@ export function Navbar() {
   const { user, profile } = useAuth();
   const { data: unreadCount = 0 } = useUnreadNotificationsCount();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
@@ -21,17 +31,19 @@ export function Navbar() {
               <img
                 src="/logo.png"
                 alt="RunKing"
-                className="h-10 object-contain transition-transform duration-300 group-hover:scale-105"
+                className="h-12 object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
 
             {/* Search - Desktop */}
-            <div className="hidden md:flex flex-1 max-w-md mx-8">
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-8">
               <div className="relative w-full">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                 <input
                   type="text"
                   placeholder="Buscar rankings, usuarios..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className={cn(
                     "w-full h-11 pl-11 pr-4",
                     "bg-white/5 backdrop-blur-sm",
@@ -42,7 +54,7 @@ export function Navbar() {
                   )}
                 />
               </div>
-            </div>
+            </form>
 
             {/* Actions */}
             <div className="flex items-center gap-2">
