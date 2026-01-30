@@ -80,7 +80,7 @@ export function Navbar() {
                   </Link>
 
                   {/* Profile */}
-                  <Link to={`/profile/${profile?.username || ""}`}>
+                  <Link to="/profile">
                     <Avatar size="default" className="cursor-pointer">
                       {profile?.avatar_url && (
                         <AvatarImage
@@ -129,7 +129,7 @@ export function BottomNav() {
     { path: "/create", icon: "plus", label: "Crear" },
     { path: "/notifications", icon: "bell", label: "Notificaciones" },
     {
-      path: user ? `/profile/${profile?.username}` : "/login",
+      path: user ? "/profile" : "/login",
       icon: "user",
       label: "Perfil",
     },

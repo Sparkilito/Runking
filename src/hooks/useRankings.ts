@@ -15,7 +15,10 @@ export function useFeedRankings(type: 'for_you' | 'trending' = 'for_you') {
           limit_count: 20,
         });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching trending rankings:', error);
+          throw error;
+        }
         return data as RankingWithStats[];
       }
 
@@ -27,7 +30,10 @@ export function useFeedRankings(type: 'for_you' | 'trending' = 'for_you') {
         .order('created_at', { ascending: false })
         .limit(20);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching feed rankings:', error);
+        throw error;
+      }
       return data as RankingWithStats[];
     },
   });

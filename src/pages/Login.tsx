@@ -6,8 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Eye, EyeOff, Loader2, Mail, Lock, AlertCircle, Crown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Eye, EyeOff, Loader2, Mail, Lock, AlertCircle } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -55,27 +54,16 @@ export default function Login() {
       <div className="w-full max-w-md space-y-8 animate-fade-in">
         {/* Logo */}
         <div className="flex flex-col items-center space-y-4">
-          <Link to="/" className="flex items-center gap-3 group">
-            <div
-              className={cn(
-                "w-16 h-16 rounded-squircle-lg",
-                "bg-gradient-to-br from-solar-400 to-solar-600",
-                "flex items-center justify-center",
-                "shadow-glow-solar",
-                "transition-transform duration-300 group-hover:scale-110"
-              )}
-            >
-              <Crown className="w-8 h-8 text-midnight-300" />
-            </div>
+          <Link to="/" className="group">
+            <img
+              src="/logo.png"
+              alt="RunKing"
+              className="h-24 object-contain transition-transform duration-300 group-hover:scale-105"
+            />
           </Link>
-          <div className="text-center">
-            <h1 className="font-display text-3xl font-bold text-white">
-              Run<span className="text-solar-400">King</span>
-            </h1>
-            <p className="text-white/50 mt-2">
-              Crea y comparte rankings de lo que más te apasiona
-            </p>
-          </div>
+          <p className="text-white/50 text-center">
+            Crea y comparte rankings de lo que más te apasiona
+          </p>
         </div>
 
         {/* Login Card */}

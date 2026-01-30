@@ -11,7 +11,10 @@ export function useCategories() {
         .select('*')
         .order('name', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching categories:', error);
+        throw error;
+      }
       return data as Category[];
     },
     staleTime: 1000 * 60 * 60, // Categories don't change often

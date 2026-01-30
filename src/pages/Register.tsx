@@ -16,9 +16,7 @@ import {
   AtSign,
   AlertCircle,
   CheckCircle,
-  Crown,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -102,17 +100,12 @@ export default function Register() {
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md space-y-8 animate-fade-in">
           <div className="flex flex-col items-center space-y-4">
-            <Link to="/" className="flex items-center gap-3">
-              <div
-                className={cn(
-                  "w-16 h-16 rounded-squircle-lg",
-                  "bg-gradient-to-br from-solar-400 to-solar-600",
-                  "flex items-center justify-center",
-                  "shadow-glow-solar"
-                )}
-              >
-                <Crown className="w-8 h-8 text-midnight-300" />
-              </div>
+            <Link to="/">
+              <img
+                src="/logo.png"
+                alt="RunKing"
+                className="h-20 object-contain"
+              />
             </Link>
           </div>
 
@@ -150,25 +143,14 @@ export default function Register() {
       <div className="w-full max-w-md space-y-8 animate-fade-in">
         {/* Logo */}
         <div className="flex flex-col items-center space-y-4">
-          <Link to="/" className="flex items-center gap-3 group">
-            <div
-              className={cn(
-                "w-16 h-16 rounded-squircle-lg",
-                "bg-gradient-to-br from-solar-400 to-solar-600",
-                "flex items-center justify-center",
-                "shadow-glow-solar",
-                "transition-transform duration-300 group-hover:scale-110"
-              )}
-            >
-              <Crown className="w-8 h-8 text-midnight-300" />
-            </div>
+          <Link to="/" className="group">
+            <img
+              src="/logo.png"
+              alt="RunKing"
+              className="h-24 object-contain transition-transform duration-300 group-hover:scale-105"
+            />
           </Link>
-          <div className="text-center">
-            <h1 className="font-display text-3xl font-bold text-white">
-              Run<span className="text-solar-400">King</span>
-            </h1>
-            <p className="text-white/50 mt-2">Únete a la comunidad de rankings</p>
-          </div>
+          <p className="text-white/50 text-center">Únete a la comunidad de rankings</p>
         </div>
 
         {/* Register Card */}
