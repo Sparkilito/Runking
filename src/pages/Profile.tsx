@@ -4,6 +4,7 @@ import { Settings, Grid3x3, Heart, Bookmark, LogOut, Shield, Loader2, Edit3 } fr
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,

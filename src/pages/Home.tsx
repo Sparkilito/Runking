@@ -125,8 +125,8 @@ const Home = () => {
         )}
 
         {/* Categories Scroll */}
-        <section className="px-4 py-4 overflow-x-auto scrollbar-hide">
-          <div className="flex gap-2 max-w-screen-xl mx-auto">
+        <section className="max-w-screen-xl mx-auto px-4 py-4 overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2">
             <button
               onClick={() => setSelectedCategory(null)}
               className={cn(
