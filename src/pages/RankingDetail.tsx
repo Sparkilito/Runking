@@ -1,7 +1,7 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -16,8 +16,15 @@ import {
   Flag,
   Trash2,
   Trophy,
+  Star,
+  Film,
+  Tv,
+  BookOpen,
+  Quote,
+  ChevronDown,
+  ChevronUp,
+  Flame,
 } from "lucide-react";
-import { useState } from "react";
 import { toast } from "sonner";
 import { useRanking } from "@/hooks/useRankings";
 import {
@@ -38,8 +45,159 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Podium } from "@/components/neo/Podium";
-import { BottomNav, LoadingScreen } from "@/components/neo";
+import { Podium, BottomNav, LoadingScreen, ScoreIndicator } from "@/components/neo";
+import { ShareModal } from "@/components/neo/ShareModal";
+import { cn } from "@/lib/utils";
+
+// =====================================================
+// Score Badge Component (inline)
+// =====================================================
+
+function ScoreBadgeInline({ score }: { score: number }) {
+  const getScoreColor = (s: number) => {
+    if (s >= 9) return "from-yellow-400 to-amber-500";
+    if (s >= 7) return "from-green-400 to-emerald-500";
+    if (s >= 5) return "from-blue-400 to-cyan-500";
+    if (s >= 3) return "from-orange-400 to-amber-500";
+    return "from-red-400 to-rose-500";
+  };
+
+  return (
+    <div
+      className={cn(
+        "w-12 h-12 rounded-xl flex items-center justify-center",
+        "bg-gradient-to-br shadow-lg",
+        getScoreColor(score)
+      )}
+    >
+      <span className="text-lg font-bold text-white">{score}</span>
+    </div>
+  );
+}
+
+// =====================================================
+// Media Type Icon
+// =====================================================
+
+function MediaTypeIcon({ type, className }: { type?: string; className?: string }) {
+  if (type === "movie") return <Film className={className} />;
+  if (type === "series") return <Tv className={className} />;
+  if (type === "book") return <BookOpen className={className} />;
+  return <Trophy className={className} />;
+}
+
+function getMediaTypeEmoji(type?: string) {
+  if (type === "movie") return "🎬";
+  if (type === "series") return "📺";
+  if (type === "book") return "📚";
+  return "📋";
+}
+
+// =====================================================
+// Ranking Item Card with Score and Review
+// =====================================================
+
+interface RankingItemProps {
+  item: any;
+  position: number;
+  showTopBadge?: boolean;
+}
+
+function RankingItemCard({ item, position, showTopBadge }: RankingItemProps) {
+  const [showReview, setShowReview] = useState(false);
+
+  const getPositionStyle = (pos: number) => {
+    if (pos === 1) return "bg-gradient-to-br from-yellow-400 to-amber-500 text-yellow-900";
+    if (pos === 2) return "bg-gradient-to-br from-gray-300 to-gray-400 text-gray-700";
+    if (pos === 3) return "bg-gradient-to-br from-amber-600 to-amber-700 text-amber-100";
+    return "bg-white/10 text-white/70";
+  };
+
+  return (
+    <div
+      className={cn(
+        "group relative overflow-hidden rounded-2xl",
+        "bg-white/5 hover:bg-white/10 transition-all duration-300",
+        "border border-white/5 hover:border-white/10"
+      )}
+    >
+      <div className="flex items-stretch">
+        {/* Position badge */}
+        <div
+          className={cn(
+            "w-14 flex-shrink-0 flex items-center justify-center",
+            "text-2xl font-black",
+            getPositionStyle(position)
+          )}
+        >
+          {position}
+        </div>
+
+        {/* Image */}
+        {item.image_url && (
+          <div className="w-20 h-28 flex-shrink-0 overflow-hidden">
+            <img
+              src={item.image_url}
+              alt={item.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="flex-1 p-4 min-w-0">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-semibold text-white text-lg leading-tight line-clamp-2">
+                {item.title}
+              </h3>
+              {item.subtitle && (
+                <p className="text-sm text-white/50 mt-0.5">{item.subtitle}</p>
+              )}
+            </div>
+
+            {/* Score */}
+            {typeof item.score === "number" && (
+              <ScoreBadgeInline score={item.score} />
+            )}
+          </div>
+
+          {/* Review toggle */}
+          {item.review && (
+            <button
+              onClick={() => setShowReview(!showReview)}
+              className="flex items-center gap-1 mt-2 text-sm text-white/50 hover:text-white/70 transition-colors"
+            >
+              <Quote className="w-3.5 h-3.5" />
+              <span>Ver reseña</span>
+              {showReview ? (
+                <ChevronUp className="w-3.5 h-3.5" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5" />
+              )}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Review expanded */}
+      {item.review && showReview && (
+        <div className="px-4 pb-4 pt-0">
+          <div className="p-4 rounded-xl bg-white/5 border-l-4 border-purple/50">
+            <Quote className="w-4 h-4 text-purple/50 mb-2" />
+            <p className="text-sm text-white/80 italic leading-relaxed">
+              {item.review}
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// =====================================================
+// Main Component
+// =====================================================
 
 const RankingDetail = () => {
   const { id } = useParams();
@@ -58,6 +216,7 @@ const RankingDetail = () => {
   const addComment = useAddComment();
 
   const [commentText, setCommentText] = useState("");
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const handleLike = async () => {
     if (!user) {
@@ -109,26 +268,6 @@ const RankingDetail = () => {
       toast.success(isFollowing ? "Dejaste de seguir" : "Siguiendo");
     } catch (error) {
       toast.error("Error al seguir");
-    }
-  };
-
-  const handleShare = async () => {
-    if (!ranking) return;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: ranking.title,
-          text: ranking.description || "",
-          url: window.location.href,
-        });
-      } catch (error) {
-        console.log("Share cancelled");
-      }
-    } else {
-      const text = encodeURIComponent(`${ranking.title}\n\n${window.location.href}`);
-      window.open(`https://wa.me/?text=${text}`, "_blank");
-      toast.success("Compartido por WhatsApp");
     }
   };
 
@@ -184,6 +323,17 @@ const RankingDetail = () => {
   }
 
   const isOwner = user?.id === ranking.user_id;
+  const shareUrl = `${window.location.origin}/ranking/${id}`;
+
+  // Calculate average score if items have scores
+  const itemsWithScores = ranking.items?.filter((item: any) => typeof item.score === "number") || [];
+  const averageScore =
+    itemsWithScores.length > 0
+      ? (itemsWithScores.reduce((sum: number, item: any) => sum + item.score, 0) / itemsWithScores.length).toFixed(1)
+      : null;
+
+  // Get first item image for share preview
+  const shareImageUrl = ranking.items?.[0]?.image_url;
 
   return (
     <div className="min-h-screen bg-midnight pb-24">
@@ -221,22 +371,36 @@ const RankingDetail = () => {
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-6">
         {/* Ranking info */}
         <div className="space-y-4">
-          <div className="space-y-2">
-            <span className="category-pill">
-              {ranking.category_name}
-            </span>
+          <div className="space-y-3">
+            {/* Category & Media type badges */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple/20 text-purple text-sm font-medium">
+                <span>{getMediaTypeEmoji(ranking.media_type)}</span>
+                {ranking.category_name}
+              </span>
+              {averageScore && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-solar/20 text-solar text-sm font-medium">
+                  <Star className="w-4 h-4" fill="currentColor" />
+                  Promedio: {averageScore}
+                </span>
+              )}
+            </div>
+
             <h1 className="text-3xl font-heading font-black leading-tight text-white">
               {ranking.title}
             </h1>
             {ranking.description && (
-              <p className="text-white/70">{ranking.description}</p>
+              <p className="text-white/70 text-lg">{ranking.description}</p>
             )}
           </div>
 
           {/* Author */}
           <Card variant="glass" className="p-4">
             <div className="flex items-center justify-between">
-              <Link to={`/user/${ranking.author_username}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+              <Link
+                to={`/user/${ranking.author_username}`}
+                className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+              >
                 <Avatar className="w-12 h-12 border-2 border-purple/50">
                   <AvatarImage src={ranking.author_avatar_url || undefined} />
                   <AvatarFallback className="bg-purple text-white font-bold">
@@ -244,7 +408,9 @@ const RankingDetail = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-semibold text-white">{ranking.author_display_name || ranking.author_username}</p>
+                  <p className="font-semibold text-white">
+                    {ranking.author_display_name || ranking.author_username}
+                  </p>
                   <p className="text-sm text-white/60">
                     {formatDistanceToNow(new Date(ranking.created_at), {
                       addSuffix: true,
@@ -278,7 +444,10 @@ const RankingDetail = () => {
             <Button
               variant="secondary"
               size="lg"
-              className={`flex-1 gap-2 ${hasLiked && "text-red-400 border-red-400/50"}`}
+              className={cn(
+                "flex-1 gap-2",
+                hasLiked && "text-red-400 border-red-400/50 bg-red-400/10"
+              )}
               onClick={handleLike}
               disabled={toggleLike.isPending}
             >
@@ -294,20 +463,28 @@ const RankingDetail = () => {
             <Button
               variant="secondary"
               size="lg"
-              className={`gap-2 ${hasSaved && "text-cyan border-cyan/50"}`}
+              className={cn(
+                "gap-2",
+                hasSaved && "text-cyan border-cyan/50 bg-cyan/10"
+              )}
               onClick={handleSave}
               disabled={toggleSave.isPending}
             >
               <Bookmark className="w-5 h-5" fill={hasSaved ? "currentColor" : "none"} />
             </Button>
 
-            <Button variant="secondary" size="lg" className="gap-2" onClick={handleShare}>
+            <Button
+              variant="secondary"
+              size="lg"
+              className="gap-2 hover:text-solar hover:border-solar/50"
+              onClick={() => setShowShareModal(true)}
+            >
               <Share2 className="w-5 h-5" />
             </Button>
           </div>
         </div>
 
-        {/* Podium */}
+        {/* Podium for top 3 */}
         {ranking.items && ranking.items.length >= 3 && (
           <Card variant="glass" className="p-6">
             <h2 className="text-xl font-heading font-bold mb-6 text-center text-white flex items-center justify-center gap-2">
@@ -315,38 +492,44 @@ const RankingDetail = () => {
               Top 3
             </h2>
             <Podium
-              items={ranking.items.slice(0, 3).map((item) => ({
+              items={ranking.items.slice(0, 3).map((item: any) => ({
                 position: item.position,
                 title: item.title,
                 imageUrl: item.image_url || undefined,
+                score: item.score,
               }))}
             />
           </Card>
         )}
 
-        {/* Rest of the list */}
-        {ranking.items && ranking.items.length > 3 && (
-          <Card variant="glass" className="p-6">
-            <h2 className="text-xl font-heading font-bold mb-4 text-white">Ranking completo</h2>
-            <div className="space-y-3">
-              {ranking.items.slice(3).map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-4 p-3 rounded-squircle glass hover:bg-white/10 transition-colors"
-                >
-                  <div className="w-10 h-10 rounded-full bg-purple/30 flex items-center justify-center text-white font-bold flex-shrink-0">
-                    {item.position}
-                  </div>
-                  <p className="font-medium flex-1 text-white">{item.title}</p>
-                </div>
-              ))}
-            </div>
-          </Card>
-        )}
+        {/* Full ranking list with scores and reviews */}
+        <Card variant="glass" className="p-4 md:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-heading font-bold text-white flex items-center gap-2">
+              <Flame className="w-5 h-5 text-solar" />
+              Ranking completo
+            </h2>
+            <span className="text-sm text-white/50">
+              {ranking.items?.length || 0} items
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            {ranking.items?.map((item: any, index: number) => (
+              <RankingItemCard
+                key={item.id}
+                item={item}
+                position={item.position || index + 1}
+                showTopBadge={index < 3}
+              />
+            ))}
+          </div>
+        </Card>
 
         {/* Comments */}
         <Card variant="glass" className="p-6">
-          <h2 className="text-xl font-heading font-bold mb-4 text-white">
+          <h2 className="text-xl font-heading font-bold mb-4 text-white flex items-center gap-2">
+            <MessageCircle className="w-5 h-5 text-cyan" />
             Comentarios ({ranking.comments_count})
           </h2>
 
@@ -403,14 +586,41 @@ const RankingDetail = () => {
               ))}
             </div>
           ) : (
-            <p className="text-center text-white/50 py-8">
-              Sé el primero en comentar
-            </p>
+            <p className="text-center text-white/50 py-8">Sé el primero en comentar</p>
           )}
+        </Card>
+
+        {/* Share CTA at bottom */}
+        <Card
+          variant="glass"
+          className="p-6 bg-gradient-to-br from-purple/20 to-solar/20 border-purple/20 cursor-pointer hover:scale-[1.02] transition-transform"
+          onClick={() => setShowShareModal(true)}
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple to-solar flex items-center justify-center">
+              <Share2 className="w-7 h-7 text-white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-white text-lg">¿Te gustó este ranking?</h3>
+              <p className="text-white/60 text-sm">
+                Compártelo con tus amigos y compara opiniones
+              </p>
+            </div>
+          </div>
         </Card>
       </main>
 
       <BottomNav />
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        title={ranking.title}
+        description={ranking.description}
+        url={shareUrl}
+        imageUrl={shareImageUrl}
+      />
     </div>
   );
 };

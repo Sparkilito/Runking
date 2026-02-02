@@ -1,34 +1,27 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Plus, Crown, Heart, MessageCircle, Share2, Bookmark, Trophy, RefreshCw } from "lucide-react";
+import { Plus, Crown, Heart, MessageCircle, Share2, Bookmark, Trophy, RefreshCw, Film, Tv, BookOpen, Flame, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Navbar, BottomNav } from "@/components/neo/Navbar";
 import { MiniPodium } from "@/components/neo/Podium";
-import { InlineLoader } from "@/components/neo/LoadingSpinner";
+import { InlineLoader, ScoreIndicator } from "@/components/neo";
 import { useFeedRankings } from "@/hooks/useRankings";
-import { useCategories } from "@/hooks/useCategories";
 import { useAuth } from "@/contexts/AuthContext";
 import { useInteractions } from "@/hooks/useInteractions";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import type { MediaType } from "@/lib/mediaApi";
 
-// Map icon names to emojis
-const categoryEmojis: Record<string, string> = {
-  "utensils": "🍽️",
-  "film": "🎬",
-  "music": "🎵",
-  "trophy": "🏆",
-  "laptop": "💻",
-  "plane": "✈️",
-  "book-open": "📚",
-  "tv": "📺",
-  "gamepad-2": "🎮",
-  "palette": "🎨",
-};
+// Main media categories for the pivot
+const MEDIA_CATEGORIES = [
+  { type: 'movie' as MediaType, label: 'Películas', emoji: '🎬', icon: Film, color: 'from-orange-500 to-red-500', slug: 'cine' },
+  { type: 'series' as MediaType, label: 'Series', emoji: '📺', icon: Tv, color: 'from-teal-500 to-cyan-500', slug: 'series' },
+  { type: 'book' as MediaType, label: 'Libros', emoji: '📚', icon: BookOpen, color: 'from-purple-500 to-pink-500', slug: 'libros' },
+];
 
 const Home = () => {
   const navigate = useNavigate();
@@ -36,7 +29,6 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const { data: rankings, isLoading, error, refetch } = useFeedRankings("for_you");
-  const { data: categories } = useCategories();
   const { toggleLike, toggleSave } = useInteractions();
 
   // Filter rankings by category if selected
@@ -94,23 +86,23 @@ const Home = () => {
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-purple mb-6">
                 <Crown className="w-4 h-4 text-solar" />
                 <span className="text-sm font-medium text-white/80">
-                  La app #1 de rankings
+                  Tu crítico interior merece ser escuchado
                 </span>
               </div>
               <h1 className="font-display text-4xl sm:text-5xl font-bold text-white mb-4">
-                Crea y comparte{" "}
+                Rankea tus{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple to-solar">
-                  tus rankings
-                </span>
+                  películas, series y libros
+                </span>{" "}
+                favoritos
               </h1>
               <p className="text-lg text-white/60 mb-8">
-                Descubre los mejores rankings de películas, música, restaurantes y
-                mucho más. Crea tu propio Top y compártelo con el mundo.
+                Crea rankings con puntuaciones, comparte tu opinión y descubre qué están viendo y leyendo los demás.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button size="lg" onClick={() => navigate("/register")}>
-                  <Plus className="w-5 h-5 mr-2" />
-                  Comenzar ahora
+                  <Zap className="w-5 h-5 mr-2" />
+                  Comenzar gratis
                 </Button>
                 <Button
                   variant="secondary"
@@ -124,45 +116,92 @@ const Home = () => {
           </section>
         )}
 
-        {/* Categories Scroll */}
-        <section className="max-w-screen-xl mx-auto px-4 py-4 overflow-x-auto scrollbar-hide">
-          <div className="flex gap-2">
+        {/* Categories - Main 3 */}
+        <section className="max-w-screen-xl mx-auto px-4 py-4">
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+            {/* All button */}
             <button
               onClick={() => setSelectedCategory(null)}
               className={cn(
-                "category-pill whitespace-nowrap transition-all",
-                !selectedCategory ? "bg-purple text-white" : ""
+                "flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold transition-all",
+                "border-2 whitespace-nowrap",
+                !selectedCategory
+                  ? "bg-gradient-to-r from-purple-500 to-pink-500 border-transparent text-white shadow-lg shadow-purple-500/30"
+                  : "bg-white/5 border-white/10 text-white/70 hover:border-white/20"
               )}
             >
-              🔥 Todos
+              <Flame className="w-5 h-5" />
+              <span>Todos</span>
             </button>
-            {categories?.map((cat: any) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.slug)}
-                className={cn(
-                  "category-pill whitespace-nowrap transition-all",
-                  selectedCategory === cat.slug ? "bg-purple text-white" : ""
-                )}
-              >
-                {categoryEmojis[cat.icon] || "📋"} {cat.name}
-              </button>
-            ))}
+
+            {/* Media type buttons */}
+            {MEDIA_CATEGORIES.map((cat) => {
+              const Icon = cat.icon;
+              const isActive = selectedCategory === cat.slug;
+              return (
+                <button
+                  key={cat.type}
+                  onClick={() => setSelectedCategory(isActive ? null : cat.slug)}
+                  className={cn(
+                    "flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold transition-all",
+                    "border-2 whitespace-nowrap",
+                    isActive
+                      ? `bg-gradient-to-r ${cat.color} border-transparent text-white shadow-lg`
+                      : "bg-white/5 border-white/10 text-white/70 hover:border-white/20"
+                  )}
+                >
+                  <span className="text-xl">{cat.emoji}</span>
+                  <span>{cat.label}</span>
+                </button>
+              );
+            })}
           </div>
         </section>
+
+        {/* Quick Create Cards - For logged in users */}
+        {user && (
+          <section className="max-w-screen-xl mx-auto px-4 py-2">
+            <div className="grid grid-cols-3 gap-3">
+              {MEDIA_CATEGORIES.map((cat) => {
+                const Icon = cat.icon;
+                return (
+                  <button
+                    key={cat.type}
+                    onClick={() => navigate("/create")}
+                    className={cn(
+                      "p-4 rounded-2xl text-center transition-all",
+                      "bg-gradient-to-br opacity-80 hover:opacity-100",
+                      "hover:scale-105 active:scale-95",
+                      cat.color
+                    )}
+                  >
+                    <Icon className="w-8 h-8 text-white mx-auto mb-2" />
+                    <span className="text-white text-sm font-medium">
+                      Rankear {cat.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Feed */}
         <section className="max-w-screen-xl mx-auto px-4 py-4">
           {/* Feed header */}
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-white/50">
-              Rankings recientes
-              {selectedCategory && (
-                <span className="text-purple">
-                  {" "}· {categories?.find((c: any) => c.slug === selectedCategory)?.name}
-                </span>
-              )}
-            </p>
+            <div>
+              <h2 className="text-lg font-bold text-white">
+                {selectedCategory
+                  ? MEDIA_CATEGORIES.find(c => c.slug === selectedCategory)?.label || 'Rankings'
+                  : 'Rankings recientes'}
+              </h2>
+              <p className="text-sm text-white/50">
+                {selectedCategory
+                  ? `Los mejores rankings de ${MEDIA_CATEGORIES.find(c => c.slug === selectedCategory)?.label.toLowerCase()}`
+                  : 'Descubre lo que la comunidad está rankeando'}
+              </p>
+            </div>
             <Button
               variant="ghost"
               size="sm"
@@ -244,7 +283,14 @@ const Home = () => {
                           })}
                         </p>
                       </div>
-                      <span className="category-pill text-xs">
+                      {/* Category badge with emoji */}
+                      <span className={cn(
+                        "px-3 py-1.5 rounded-full text-xs font-medium",
+                        "bg-white/10 text-white/80"
+                      )}>
+                        {ranking.category_slug === 'cine' || ranking.category_slug === 'peliculas' ? '🎬' :
+                         ranking.category_slug === 'series' ? '📺' :
+                         ranking.category_slug === 'libros' ? '📚' : '📋'}{' '}
                         {ranking.category_name}
                       </span>
                     </div>
@@ -268,6 +314,7 @@ const Home = () => {
                             position: item.position,
                             title: item.title,
                             imageUrl: item.image_url,
+                            score: item.score,
                           }))}
                         />
                       </div>

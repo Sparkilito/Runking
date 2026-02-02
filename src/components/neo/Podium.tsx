@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Crown } from "lucide-react";
+import { Crown, Star } from "lucide-react";
 
 interface PodiumItem {
   id?: string;
@@ -8,11 +8,21 @@ interface PodiumItem {
   image?: string;
   imageUrl?: string;
   subtitle?: string;
+  score?: number;
 }
 
 interface PodiumProps {
   items: PodiumItem[];
   className?: string;
+}
+
+// Helper to get score color
+function getScoreColor(score: number) {
+  if (score >= 9) return "from-yellow-400 to-amber-500";
+  if (score >= 7) return "from-green-400 to-emerald-500";
+  if (score >= 5) return "from-blue-400 to-cyan-500";
+  if (score >= 3) return "from-orange-400 to-amber-500";
+  return "from-red-400 to-rose-500";
 }
 
 export function Podium({ items, className }: PodiumProps) {
@@ -130,6 +140,20 @@ export function Podium({ items, className }: PodiumProps) {
                 </p>
               )}
 
+              {/* Score badge (if score exists) */}
+              {typeof item.score === "number" && (
+                <div
+                  className={cn(
+                    "absolute -top-2 -left-2 w-8 h-8 rounded-lg",
+                    "flex items-center justify-center",
+                    "bg-gradient-to-br shadow-lg",
+                    getScoreColor(item.score)
+                  )}
+                >
+                  <span className="text-sm font-bold text-white">{item.score}</span>
+                </div>
+              )}
+
               {/* Position badge */}
               <div
                 className={cn(
@@ -163,10 +187,10 @@ export function MiniPodium({ items, className }: PodiumProps) {
   const safeItems = items.slice(0, 3);
 
   return (
-    <div className={cn("flex items-end justify-center gap-1", className)}>
+    <div className={cn("flex items-end justify-center gap-3", className)}>
       {safeItems.map((item, index) => {
         const position = index + 1;
-        const heights = ["h-10", "h-8", "h-6"];
+        const heights = ["h-12", "h-10", "h-8"];
         const colors = [
           "bg-gradient-to-t from-yellow-500 to-yellow-400",
           "bg-gradient-to-t from-gray-400 to-gray-300",
@@ -177,25 +201,49 @@ export function MiniPodium({ items, className }: PodiumProps) {
 
         return (
           <div key={itemKey} className="flex flex-col items-center">
-            {itemImage ? (
-              <img
-                src={itemImage}
-                alt={item.title}
-                className="w-6 h-6 rounded-full ring-1 ring-white/20 mb-1 object-cover"
-              />
-            ) : (
-              <div
-                className={cn(
-                  "w-6 h-6 rounded-full mb-1 flex items-center justify-center text-[10px] font-bold",
-                  colors[index],
-                  position === 1 ? "text-midnight-300" : "text-white"
-                )}
-              >
-                {position}
-              </div>
-            )}
+            {/* Image */}
+            <div className="relative">
+              {itemImage ? (
+                <img
+                  src={itemImage}
+                  alt={item.title}
+                  className="w-10 h-10 rounded-lg ring-2 ring-white/20 mb-1 object-cover"
+                />
+              ) : (
+                <div
+                  className={cn(
+                    "w-10 h-10 rounded-lg mb-1 flex items-center justify-center text-sm font-bold",
+                    colors[index],
+                    position === 1 ? "text-midnight-300" : "text-white"
+                  )}
+                >
+                  {position}
+                </div>
+              )}
+
+              {/* Score badge (mini version) */}
+              {typeof item.score === "number" && (
+                <div
+                  className={cn(
+                    "absolute -top-1 -right-1 w-5 h-5 rounded-md",
+                    "flex items-center justify-center",
+                    "bg-gradient-to-br shadow-sm",
+                    getScoreColor(item.score)
+                  )}
+                >
+                  <span className="text-[10px] font-bold text-white">{item.score}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Title (truncated) */}
+            <p className="text-[9px] text-white/70 text-center truncate w-12 mb-1">
+              {item.title}
+            </p>
+
+            {/* Podium base */}
             <div
-              className={cn("w-5 rounded-t-sm", heights[index], colors[index])}
+              className={cn("w-10 rounded-t-sm", heights[index], colors[index])}
             />
           </div>
         );
